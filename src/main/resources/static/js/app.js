@@ -2,6 +2,71 @@
     'use strict';
 
     var app = angular.module('AdminSystem', ['ngRoute', 'ngSanitize']);
+        app.service('ProjectService', function () {
+            var ProjectService = this;
+            var nextId = 6;
+            var projectData = [
+                {
+                    id: 1,
+                    name: 'Napsugár Szálló',
+                    retention: 0,
+                    note: '-'
+                },
+                {
+                    id: 2,
+                    name: 'Tölgyfa Panzió',
+                    retention: 0,
+                    note: '-'
+                }
+            ];
+            ProjectService.createProject = function (newProject, callback) {
+                projectData.push({
+                    id: nextId,
+                    name: newProject.name,
+                    retention: newProject.retention,
+                    note: newProject.note
+                });
+                nextId++;
+                callback(true);
+            };
+            ProjectService.editProject = function (editedProject, id, callback) {
+                var success = false;
+                for (var i in projectData) {
+                    if (parseInt(id, 10) === projectData[i].id) {
+                        projectData[i] = {
+                            id : projectData[i].id,
+                            name: editedProject.name,
+                            retention: editedProject.retention,
+                            note: editedProject.note
+                        };
+                        success = true;
+                    }
+                }
+                callback(success);
+            };
+            ProjectService.getProjectById = function (id, callback) {
+                var foundUser = null;
+                for (var i in projectData) {
+                    if (parseInt(id, 10) === projectData[i].id) {
+                        foundUser = projectData[i];
+                    }
+                }
+                callback(foundUser);
+            };
+            ProjectService.deleteProject = function (id, callback) {
+                var success = false;
+                for (var i in projectData) {
+                    if (parseInt(id, 10) === projectData[i].id) {
+                        projectData.splice(i, 1);
+                        success = true;
+                    }
+                }
+                callback(success);
+            };
+            UserService.getAllProjects = function(callback) {
+                callback(projectData);
+            };
+        });
     app.service('UserService', function () {
         var UserService = this;
         var nextId = 6;
@@ -158,10 +223,72 @@
             });
         };
     }]);
-    app.controller('ProjectsController', function () {
+    app.controller('ProjectListController', ['ProjectService', function (ProjectService) {
         var vm = this;
-        vm.title = 'Munkák';
-    });
+        vm.searchField = '';
+        vm.tableConfig = {
+            headers: ['Id', 'Név', 'Visszatartás', 'Megjegyzés', 'Műveletek'],
+            data: null
+        };
+        ProjectService.getAllProjects(function(data){
+            vm.tableConfig.data = data;
+        });
+        vm.deleteUser = function (id) {
+            ProjectService.deleteProject(id, function(success){
+                if(success) {
+                    console.log('DELETE SUCCESS');
+                } else {
+                    console.log('DELETE FAILED');
+                }
+            })
+        };
+    }]);
+    app.controller('ProjectCreateController', ['$location', 'ProjectService', function ($location, ProjectService) {
+        var vm = this;
+        vm.newProject = {
+            name: '',
+            retention: 0,
+            note: ''
+        };
+        vm.createProject = function () {
+            ProjectService.createProject(vm.newProject, function(success) {
+                if(success) {
+                    $location.path('/projects');
+                } else {
+                    console.log('PROJECT CREATION FAILED');
+                }
+            })
+        };
+    }]);
+    app.controller('ProjectEitController', ['$routeParams', '$location', 'ProjectService', function ($routeParams, $location, ProjectService) {
+        var vm = this;
+        var projectId = $routeParams.id;
+        vm.project = {
+            name: '',
+            wage: 0,
+            note: ''
+        };
+        ProjectService.getProjectById(projectId, function(data){
+            if(data) {
+                vm.project = {
+                    name: data.name,
+                    retention: data.retention,
+                    note: data.note
+                }
+            } else {
+                console.log('User with id ' + userId + ' not found!');
+            }
+        });
+        vm.editProject = function() {
+            ProjectService.editProject(vm.project, projectId, function(success){
+                if(success) {
+                    $location.path('/projects');
+                } else {
+                    console.log('PROJECT EDIT FAILED');
+                }
+            });
+        };
+    }]);
     app.config(function ($routeProvider, $locationProvider, $httpProvider) {
         $routeProvider
             .when('/', {
@@ -180,7 +307,13 @@
                 templateUrl: 'pages/users/edit.html',
             })
             .when('/projects', {
-                templateUrl: 'pages/projects.html',
+                templateUrl: 'pages/projects/list.html',
+            })
+            .when('/projects/create', {
+                templateUrl: 'pages/projects/create.html',
+            })
+            .when('/projects/edit/:id', {
+                templateUrl: 'pages/projects/edit.html',
             });
         $locationProvider.html5Mode(true);
         $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
