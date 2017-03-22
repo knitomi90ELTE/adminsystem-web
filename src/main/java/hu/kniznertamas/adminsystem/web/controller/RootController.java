@@ -11,6 +11,7 @@ public class RootController {
             "/users/**",
             "/projects/**",
             "/today",
+            "/test"
     })
     public String index() {
         return "forward:/index.html";

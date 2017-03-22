@@ -2,71 +2,132 @@
     'use strict';
 
     var app = angular.module('AdminSystem', ['ngRoute', 'ngSanitize']);
-        app.service('ProjectService', function () {
-            var ProjectService = this;
-            var nextId = 6;
-            var projectData = [
-                {
-                    id: 1,
-                    name: 'Napsugár Szálló',
-                    retention: 0,
-                    note: '-'
-                },
-                {
-                    id: 2,
-                    name: 'Tölgyfa Panzió',
-                    retention: 0,
-                    note: '-'
+    app.service('StatusService', function() {
+        var StatusService = this;
+        var nextId = 4;
+        var statusData = [
+            {
+                id: 1,
+                name: 'Kiadás'
+            },
+            {
+                id: 2,
+                name: 'Bevétel'
+            },
+            {
+                id: 3,
+                name: 'Egyéb'
+            }
+        ];
+        StatusService.createStatus = function (newStatus, callback) {
+            statusData.push({
+                id: nextId,
+                name: newStatus.name,
+            });
+            nextId++;
+            callback(true);
+        };
+        StatusService.editStatus = function (editedStatus, id, callback) {
+            var success = false;
+            for (var i in statusData) {
+                if (parseInt(id, 10) === statusData[i].id) {
+                    statusData[i] = {
+                        id : statusData[i].id,
+                        name: editedStatus.name,
+                    };
+                    success = true;
                 }
-            ];
-            ProjectService.createProject = function (newProject, callback) {
-                projectData.push({
-                    id: nextId,
-                    name: newProject.name,
-                    retention: newProject.retention,
-                    note: newProject.note
-                });
-                nextId++;
-                callback(true);
-            };
-            ProjectService.editProject = function (editedProject, id, callback) {
-                var success = false;
-                for (var i in projectData) {
-                    if (parseInt(id, 10) === projectData[i].id) {
-                        projectData[i] = {
-                            id : projectData[i].id,
-                            name: editedProject.name,
-                            retention: editedProject.retention,
-                            note: editedProject.note
-                        };
-                        success = true;
-                    }
+            }
+            callback(success);
+        };
+        StatusService.getStatusById = function (id, callback) {
+            var foundStatus = null;
+            for (var i in statusData) {
+                if (parseInt(id, 10) === statusData[i].id) {
+                    foundStatus = statusData[i];
                 }
-                callback(success);
-            };
-            ProjectService.getProjectById = function (id, callback) {
-                var foundUser = null;
-                for (var i in projectData) {
-                    if (parseInt(id, 10) === projectData[i].id) {
-                        foundUser = projectData[i];
-                    }
+            }
+            callback(foundStatus);
+        };
+        StatusService.deleteStatus = function (id, callback) {
+            var success = false;
+            for (var i in statusData) {
+                if (parseInt(id, 10) === statusData[i].id) {
+                    statusData.splice(i, 1);
+                    success = true;
                 }
-                callback(foundUser);
-            };
-            ProjectService.deleteProject = function (id, callback) {
-                var success = false;
-                for (var i in projectData) {
-                    if (parseInt(id, 10) === projectData[i].id) {
-                        projectData.splice(i, 1);
-                        success = true;
-                    }
+            }
+            callback(success);
+        };
+        StatusService.getAllStatuses = function(callback) {
+            callback(statusData);
+        };
+    });
+    app.service('ProjectService', function () {
+        var ProjectService = this;
+        var nextId = 6;
+        var projectData = [
+            {
+                id: 1,
+                name: 'Napsugár Szálló',
+                retention: 0,
+                note: '-'
+            },
+            {
+                id: 2,
+                name: 'Tölgyfa Panzió',
+                retention: 0,
+                note: '-'
+            }
+        ];
+        ProjectService.createProject = function (newProject, callback) {
+            projectData.push({
+                id: nextId,
+                name: newProject.name,
+                retention: newProject.retention,
+                note: newProject.note
+            });
+            nextId++;
+            callback(true);
+        };
+        ProjectService.editProject = function (editedProject, id, callback) {
+            var success = false;
+            for (var i in projectData) {
+                if (parseInt(id, 10) === projectData[i].id) {
+                    projectData[i] = {
+                        id : projectData[i].id,
+                        name: editedProject.name,
+                        retention: editedProject.retention,
+                        note: editedProject.note
+                    };
+                    success = true;
                 }
-                callback(success);
-            };
-            UserService.getAllProjects = function(callback) {
-                callback(projectData);
-            };
-        });
+            }
+            callback(success);
+        };
+        ProjectService.getProjectById = function (id, callback) {
+            var foundProject = null;
+            for (var i in projectData) {
+                if (parseInt(id, 10) === projectData[i].id) {
+                    foundProject = projectData[i];
+                }
+            }
+            callback(foundProject);
+        };
+        ProjectService.deleteProject = function (id, callback) {
+            var success = false;
+            for (var i in projectData) {
+                if (parseInt(id, 10) === projectData[i].id) {
+                    projectData.splice(i, 1);
+                    success = true;
+                }
+            }
+            callback(success);
+        };
+        ProjectService.getAllProjects = function(callback) {
+            callback(projectData);
+        };
+    });
     app.service('UserService', function () {
         var UserService = this;
         var nextId = 6;
@@ -179,13 +240,13 @@
     }]);
     app.controller('UserCreateController', ['$location', 'UserService', function ($location, UserService) {
         var vm = this;
-        vm.newUser = {
+        vm.user = {
             name: '',
             wage: 0,
             note: ''
         };
         vm.createUser = function () {
-            UserService.createUser(vm.newUser, function(success) {
+            UserService.createUser(vm.user, function(success) {
                 if(success) {
                     $location.path('/users');
                 } else {
@@ -245,13 +306,13 @@
     }]);
     app.controller('ProjectCreateController', ['$location', 'ProjectService', function ($location, ProjectService) {
         var vm = this;
-        vm.newProject = {
+        vm.project = {
             name: '',
             retention: 0,
             note: ''
         };
         vm.createProject = function () {
-            ProjectService.createProject(vm.newProject, function(success) {
+            ProjectService.createProject(vm.project, function(success) {
                 if(success) {
                     $location.path('/projects');
                 } else {
@@ -289,32 +350,47 @@
             });
         };
     }]);
+    app.directive('createPage', function() {
+        return {
+            restrict: 'EA',
+            scope: {
+                config: '=config',
+                ctrl: '=ctrl'
+            },
+            templateUrl: 'html/template/create_page.html',
+            link: function ($scope, element, attrs) { }
+        };
+    });
     app.config(function ($routeProvider, $locationProvider, $httpProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: 'pages/today.html',
+                redirectTo: '/today'
             })
             .when('/today', {
-                templateUrl: 'pages/today.html',
+                templateUrl: 'html/pages/today/today.html',
             })
             .when('/users', {
-                templateUrl: 'pages/users/list.html',
+                templateUrl: 'html/pages/users/list.html',
             })
             .when('/users/create', {
-                templateUrl: 'pages/users/create.html',
+                templateUrl: 'html/pages/users/create.html',
             })
             .when('/users/edit/:id', {
-                templateUrl: 'pages/users/edit.html',
+                templateUrl: 'html/pages/users/edit.html',
             })
             .when('/projects', {
-                templateUrl: 'pages/projects/list.html',
+                templateUrl: 'html/pages/projects/list.html',
             })
             .when('/projects/create', {
-                templateUrl: 'pages/projects/create.html',
+                templateUrl: 'html/pages/projects/create.html',
             })
             .when('/projects/edit/:id', {
-                templateUrl: 'pages/projects/edit.html',
-            });
+                templateUrl: 'html/pages/projects/edit.html',
+            })
+            .when('/test', {
+                templateUrl: 'html/template/test.html',
+            })
+            .otherwise({ redirectTo: '/' });
         $locationProvider.html5Mode(true);
         $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     });

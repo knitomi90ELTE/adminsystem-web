@@ -1,0 +1,10 @@
+<div ng-controller="StatusEditController as ctrl" class="container">
+  <h1>Státusz szerkesztése</h1>
+  <form name="statusForm">
+    <div class="form-group">
+      <label for="statusName">Név</label>
+      <input type="text" class="form-control" id="statusName" placeholder="Név" ng-model="ctrl.status.name">
+    </div>
+    <button type="button" class="btn btn-success" ng-click="ctrl.editStatus()">Mentés</button>
+  </form>
+</div>
