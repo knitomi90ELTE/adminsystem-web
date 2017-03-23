@@ -248,7 +248,7 @@
         vm.createUser = function () {
             UserService.createUser(vm.user, function(success) {
                 if(success) {
-                    $location.path('/users');
+                    $location.path('/user');
                 } else {
                     console.log('USER CREATION FAILED');
                 }
@@ -277,7 +277,7 @@
         vm.editUser = function() {
             UserService.editUser(vm.user, userId, function(success){
                 if(success) {
-                    $location.path('/users');
+                    $location.path('/user');
                 } else {
                     console.log('USER EDIT FAILED');
                 }
@@ -314,14 +314,14 @@
         vm.createProject = function () {
             ProjectService.createProject(vm.project, function(success) {
                 if(success) {
-                    $location.path('/projects');
+                    $location.path('/project');
                 } else {
                     console.log('PROJECT CREATION FAILED');
                 }
             })
         };
     }]);
-    app.controller('ProjectEitController', ['$routeParams', '$location', 'ProjectService', function ($routeParams, $location, ProjectService) {
+    app.controller('ProjectEditController', ['$routeParams', '$location', 'ProjectService', function ($routeParams, $location, ProjectService) {
         var vm = this;
         var projectId = $routeParams.id;
         vm.project = {
@@ -337,30 +337,79 @@
                     note: data.note
                 }
             } else {
-                console.log('User with id ' + userId + ' not found!');
+                console.log('Project with id ' + projectId + ' not found!');
             }
         });
         vm.editProject = function() {
             ProjectService.editProject(vm.project, projectId, function(success){
                 if(success) {
-                    $location.path('/projects');
+                    $location.path('/project');
                 } else {
                     console.log('PROJECT EDIT FAILED');
                 }
             });
         };
     }]);
-    app.directive('createPage', function() {
-        return {
-            restrict: 'EA',
-            scope: {
-                config: '=config',
-                ctrl: '=ctrl'
-            },
-            templateUrl: 'html/template/create_page.html',
-            link: function ($scope, element, attrs) { }
+    app.controller('StatusListController', ['StatusService', function (StatusService) {
+        var vm = this;
+        vm.searchField = '';
+        vm.tableConfig = {
+            headers: ['Id', 'Név', 'Műveletek'],
+            data: null
         };
-    });
+        StatusService.getAllStatuses(function(data){
+            vm.tableConfig.data = data;
+        });
+        vm.deleteStatus = function (id) {
+            StatusService.deleteStatus(id, function(success){
+                if(success) {
+                    console.log('DELETE SUCCESS');
+                } else {
+                    console.log('DELETE FAILED');
+                }
+            })
+        };
+    }]);
+    app.controller('StatusCreateController', ['$location', 'StatusService', function ($location, StatusService) {
+        var vm = this;
+        vm.status = {
+            name: ''
+        };
+        vm.createStatus = function () {
+            StatusService.createStatus(vm.status, function(success) {
+                if(success) {
+                    $location.path('/status');
+                } else {
+                    console.log('STATUS CREATION FAILED');
+                }
+            })
+        };
+    }]);
+    app.controller('StatusEitController', ['$routeParams', '$location', 'StatusService', function ($routeParams, $location, StatusService) {
+        var vm = this;
+        var statusId = $routeParams.id;
+        vm.status = {
+            name: ''
+        };
+        StatusService.getStatusById(statusId, function(data){
+            if(data) {
+                vm.status = {
+                    name: data.name
+                }
+            } else {
+                console.log('Status with id ' + statusId + ' not found!');
+            }
+        });
+        vm.editStatus = function() {
+            StatusService.editStatus(vm.status, statusId, function(success){
+                if(success) {
+                    $location.path('/status');
+                } else {
+                    console.log('STATUS EDIT FAILED');
+                }
+            });
+        };
+    }]);
     app.config(function ($routeProvider, $locationProvider, $httpProvider) {
         $routeProvider
             .when('/', {
@@ -369,26 +418,32 @@
             .when('/today', {
                 templateUrl: 'html/pages/today/today.html',
             })
-            .when('/users', {
-                templateUrl: 'html/pages/users/list.html',
+            .when('/user', {
+                templateUrl: 'html/pages/user/list.html',
             })
-            .when('/users/create', {
-                templateUrl: 'html/pages/users/create.html',
+            .when('/user/create', {
+                templateUrl: 'html/pages/user/create.html',
             })
-            .when('/users/edit/:id', {
-                templateUrl: 'html/pages/users/edit.html',
+            .when('/user/edit/:id', {
+                templateUrl: 'html/pages/user/edit.html',
             })
-            .when('/projects', {
-                templateUrl: 'html/pages/projects/list.html',
+            .when('/project', {
+                templateUrl: 'html/pages/project/list.html',
             })
-            .when('/projects/create', {
-                templateUrl: 'html/pages/projects/create.html',
+            .when('/project/create', {
+                templateUrl: 'html/pages/project/create.html',
             })
-            .when('/projects/edit/:id', {
-                templateUrl: 'html/pages/projects/edit.html',
+            .when('/project/edit/:id', {
+                templateUrl: 'html/pages/project/edit.html',
             })
-            .when('/test', {
-                templateUrl: 'html/template/test.html',
+            .when('/status', {
+                templateUrl: 'html/pages/status/list.html',
+            })
+            .when('/status/create', {
+                templateUrl: 'html/pages/status/create.html',
+            })
+            .when('/status/edit/:id', {
+                templateUrl: 'html/pages/status/edit.html',
             })
             .otherwise({ redirectTo: '/' });
         $locationProvider.html5Mode(true);
