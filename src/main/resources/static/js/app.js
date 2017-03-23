@@ -294,7 +294,7 @@
         ProjectService.getAllProjects(function(data){
             vm.tableConfig.data = data;
         });
-        vm.deleteUser = function (id) {
+        vm.deleteProject = function (id) {
             ProjectService.deleteProject(id, function(success){
                 if(success) {
                     console.log('DELETE SUCCESS');
@@ -326,7 +326,7 @@
         var projectId = $routeParams.id;
         vm.project = {
             name: '',
-            wage: 0,
+            retention: 0,
             note: ''
         };
         ProjectService.getProjectById(projectId, function(data){
@@ -385,7 +385,7 @@
             })
         };
     }]);
-    app.controller('StatusEitController', ['$routeParams', '$location', 'StatusService', function ($routeParams, $location, StatusService) {
+    app.controller('StatusEditController', ['$routeParams', '$location', 'StatusService', function ($routeParams, $location, StatusService) {
         var vm = this;
         var statusId = $routeParams.id;
         vm.status = {
@@ -411,39 +411,40 @@
         };
     }]);
     app.config(function ($routeProvider, $locationProvider, $httpProvider) {
+        var PAGES = 'html/pages/';
         $routeProvider
             .when('/', {
                 redirectTo: '/today'
             })
             .when('/today', {
-                templateUrl: 'html/pages/today/today.html',
+                templateUrl: PAGES + 'today/today.html',
             })
             .when('/user', {
-                templateUrl: 'html/pages/user/list.html',
+                templateUrl: PAGES + 'user/list.html',
             })
             .when('/user/create', {
-                templateUrl: 'html/pages/user/create.html',
+                templateUrl: PAGES + 'user/create.html',
             })
             .when('/user/edit/:id', {
-                templateUrl: 'html/pages/user/edit.html',
+                templateUrl: PAGES + 'user/edit.html',
             })
             .when('/project', {
-                templateUrl: 'html/pages/project/list.html',
+                templateUrl: PAGES + 'project/list.html',
             })
             .when('/project/create', {
-                templateUrl: 'html/pages/project/create.html',
+                templateUrl: PAGES + 'project/create.html',
             })
             .when('/project/edit/:id', {
-                templateUrl: 'html/pages/project/edit.html',
+                templateUrl: PAGES + 'project/edit.html',
             })
             .when('/status', {
-                templateUrl: 'html/pages/status/list.html',
+                templateUrl: PAGES + 'status/list.html',
             })
             .when('/status/create', {
-                templateUrl: 'html/pages/status/create.html',
+                templateUrl: PAGES + 'status/create.html',
             })
             .when('/status/edit/:id', {
-                templateUrl: 'html/pages/status/edit.html',
+                templateUrl: PAGES + 'status/edit.html',
             })
             .otherwise({ redirectTo: '/' });
         $locationProvider.html5Mode(true);

@@ -5,12 +5,14 @@ import hu.kniznertamas.adminsystem.web.status.domain.request.StatusRequest;
 import hu.kniznertamas.adminsystem.web.status.domain.response.StatusView;
 import hu.kniznertamas.adminsystem.web.status.transformer.StatusViewTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 /**
  * Created by Tamas_Knizner on 2017-03-23.
  */
+@Component
 public class DefaultStatusViewFacade implements StatusViewFacade {
 
     @Autowired

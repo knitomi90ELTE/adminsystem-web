@@ -5,12 +5,14 @@ import hu.kniznertamas.adminsystem.web.project.domain.request.ProjectRequest;
 import hu.kniznertamas.adminsystem.web.project.domain.response.ProjectView;
 import hu.kniznertamas.adminsystem.web.project.transformer.ProjectViewTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 /**
  * Created by Tamas_Knizner on 2017-03-23.
  */
+@Component
 public class DefaultProjectViewFacade implements ProjectViewFacade {
 
     @Autowired

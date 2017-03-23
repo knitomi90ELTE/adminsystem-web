@@ -5,12 +5,14 @@ import hu.kniznertamas.adminsystem.web.user.domain.request.UserRequest;
 import hu.kniznertamas.adminsystem.web.user.domain.response.UserView;
 import hu.kniznertamas.adminsystem.web.user.transformer.UserViewTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 /**
  * Created by Tamas_Knizner on 2017-03-23.
  */
+@Component
 public class DefaultUserViewFacade implements UserViewFacade {
 
     @Autowired
