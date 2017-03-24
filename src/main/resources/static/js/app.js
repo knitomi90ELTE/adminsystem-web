@@ -1,222 +1,252 @@
 (function () {
     'use strict';
 
-    var app = angular.module('AdminSystem', ['ngRoute', 'ngSanitize']);
-    app.service('StatusService', function() {
-        var StatusService = this;
-        var nextId = 4;
-        var statusData = [
-            {
-                id: 1,
-                name: 'Kiadás'
-            },
-            {
-                id: 2,
-                name: 'Bevétel'
-            },
-            {
-                id: 3,
-                name: 'Egyéb'
+    var app = angular.module('AdminSystem', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast']);
+    app.factory('ResourceDao', ['$resource', function($resource) {
+
+        return function(url, uriParams) {
+            return new ResourceDao(url, uriParams, $resource);
+        };
+
+        function ResourceDao(url, uriParams, $resource) {
+            var vm = this;
+
+            vm.get = get;
+            vm.list = list;
+            vm.post = post;
+            vm.remove = remove;
+
+            var resource = $resource(url, uriParams);
+
+            function get(requestParams) {
+                return resource.get(requestParams).$promise;
             }
-        ];
+
+            function list(requestParams) {
+                return resource.query(requestParams).$promise;
+            }
+
+            function post(requestParams) {
+                return resource.save(requestParams).$promise;
+            }
+
+            function remove(requestParams) {
+                return resource.remove(requestParams).$promise;
+            }
+
+            return vm;
+        }
+
+    }]);
+    app.factory('httpErrorInterceptor', ['$q', '$window', function($q, $window) {
+        var result = {};
+        result.responseError = responseError;
+
+        function responseError(rejection) {
+            if (rejection.status === 500) {
+                $window.location.href = '/error/unavailable';
+            }
+            return $q.reject(rejection);
+        }
+        return result;
+    }]);
+    app.factory('notAuthorizedInterceptor', ['$q', '$window', function($q, $window) {
+        var result = {};
+        result.responseError = responseError;
+
+        function responseError(rejection) {
+            if (rejection.status === 403) {
+                $window.location.href = '/error/unauthorized';
+            }
+            return $q.reject(rejection);
+        }
+        return result;
+    }]);
+    app.service('StatusService',['ResourceDao', function(ResourceDao) {
+        var StatusService = {};
+        var urlBase = '/api/status/';
         StatusService.createStatus = function (newStatus, callback) {
-            statusData.push({
-                id: nextId,
-                name: newStatus.name,
-            });
-            nextId++;
-            callback(true);
+            var data = new ResourceDao(urlBase + 'create');
+            data.post(newStatus).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
         };
         StatusService.editStatus = function (editedStatus, id, callback) {
-            var success = false;
-            for (var i in statusData) {
-                if (parseInt(id, 10) === statusData[i].id) {
-                    statusData[i] = {
-                        id : statusData[i].id,
-                        name: editedStatus.name,
-                    };
-                    success = true;
+            var data = new ResourceDao(urlBase + 'edit/' + id);
+            data.post(editedStatus).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
                 }
-            }
-            callback(success);
+            );
         };
         StatusService.getStatusById = function (id, callback) {
-            var foundStatus = null;
-            for (var i in statusData) {
-                if (parseInt(id, 10) === statusData[i].id) {
-                    foundStatus = statusData[i];
+            var data = new ResourceDao(urlBase + id);
+            data.get().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
                 }
-            }
-            callback(foundStatus);
+            );
         };
         StatusService.deleteStatus = function (id, callback) {
-            var success = false;
-            for (var i in statusData) {
-                if (parseInt(id, 10) === statusData[i].id) {
-                    statusData.splice(i, 1);
-                    success = true;
+            var data = new ResourceDao(urlBase + 'delete/' + id);
+            data.post().then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
                 }
-            }
-            callback(success);
+            );
         };
         StatusService.getAllStatuses = function(callback) {
-            callback(statusData);
+            var data = new ResourceDao(urlBase + 'list');
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
         };
-    });
-    app.service('ProjectService', function () {
-        var ProjectService = this;
-        var nextId = 6;
-        var projectData = [
-            {
-                id: 1,
-                name: 'Napsugár Szálló',
-                retention: 0,
-                note: '-'
-            },
-            {
-                id: 2,
-                name: 'Tölgyfa Panzió',
-                retention: 0,
-                note: '-'
-            }
-        ];
+        return StatusService;
+    }]);
+    app.service('ProjectService',['ResourceDao', function (ResourceDao) {
+        var ProjectService = {};
+        var urlBase = '/api/project/'
         ProjectService.createProject = function (newProject, callback) {
-            projectData.push({
-                id: nextId,
-                name: newProject.name,
-                retention: newProject.retention,
-                note: newProject.note
-            });
-            nextId++;
-            callback(true);
+            var data = new ResourceDao(urlBase + 'create');
+            data.post(newProject).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
         };
         ProjectService.editProject = function (editedProject, id, callback) {
-            var success = false;
-            for (var i in projectData) {
-                if (parseInt(id, 10) === projectData[i].id) {
-                    projectData[i] = {
-                        id : projectData[i].id,
-                        name: editedProject.name,
-                        retention: editedProject.retention,
-                        note: editedProject.note
-                    };
-                    success = true;
+            var data = new ResourceDao(urlBase + 'edit/' + id);
+            data.post(editedProject).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
                 }
-            }
-            callback(success);
+            );
         };
         ProjectService.getProjectById = function (id, callback) {
-            var foundProject = null;
-            for (var i in projectData) {
-                if (parseInt(id, 10) === projectData[i].id) {
-                    foundProject = projectData[i];
+            var data = new ResourceDao(urlBase + id);
+            data.get().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
                 }
-            }
-            callback(foundProject);
+            );
         };
         ProjectService.deleteProject = function (id, callback) {
-            var success = false;
-            for (var i in projectData) {
-                if (parseInt(id, 10) === projectData[i].id) {
-                    projectData.splice(i, 1);
-                    success = true;
+            var data = new ResourceDao(urlBase + 'delete/' + id);
+            data.post().then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
                 }
-            }
-            callback(success);
+            );
         };
         ProjectService.getAllProjects = function(callback) {
-            callback(projectData);
+            var data = new ResourceDao(urlBase + 'list');
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
         };
-    });
+        return ProjectService;
+    }]);
     app.service('UserService', function () {
-        var UserService = this;
-        var nextId = 6;
-        var userData = [
-            {
-                id: 1,
-                name: 'Kiss István',
-                wage: 1000,
-                note: 'Beteg'
-            },
-            {
-                id: 2,
-                name: 'Nagy Zoltán',
-                wage: 1100,
-                note: 'Szabin'
-            },
-            {
-                id: 3,
-                name: 'Szabó Miklós',
-                wage: 980,
-                note: '-'
-            },
-            {
-                id: 4,
-                name: 'Tóth Ferenc',
-                wage: 2000,
-                note: 'Vezető'
-            },
-            {
-                id: 5,
-                name: 'Kis Imre',
-                wage: 750,
-                note: 'Tanuló'
-            }
-        ];
+        var UserService = {};
+        var urlBase = '/api/user/';
         UserService.createUser = function (newUser, callback) {
-            userData.push({
-                id: nextId,
-                name: newUser.name,
-                wage: newUser.wage,
-                note: newUser.note
-            });
-            nextId++;
-            callback(true);
+            var data = new ResourceDao(urlBase + 'create');
+            data.post(newUser).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
         };
         UserService.editUser = function (editedUser, id, callback) {
-            var success = false;
-            for (var i in userData) {
-                if (parseInt(id, 10) === userData[i].id) {
-                    userData[i] = {
-                        id : userData[i].id,
-                        name: editedUser.name,
-                        wage: editedUser.wage,
-                        note: editedUser.note
-                    };
-                    success = true;
+            var data = new ResourceDao(urlBase + 'edit/' + id);
+            data.post(editedUser).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
                 }
-            }
-            callback(success);
+            );
         };
         UserService.getUserById = function (id, callback) {
-            var foundUser = null;
-            for (var i in userData) {
-                if (parseInt(id, 10) === userData[i].id) {
-                    foundUser = userData[i];
+            var data = new ResourceDao(urlBase + id);
+            data.get().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
                 }
-            }
-            callback(foundUser);
+            );
         };
         UserService.deleteUser = function (id, callback) {
-            var success = false;
-            for (var i in userData) {
-                if (parseInt(id, 10) === userData[i].id) {
-                    userData.splice(i, 1);
-                    success = true;
+            var data = new ResourceDao(urlBase + 'delete/' + id);
+            data.post().then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
                 }
-            }
-            callback(success);
+            );
         };
         UserService.getAllUsers = function(callback) {
-            callback(userData);
+            var data = new ResourceDao(urlBase + 'list');
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
         };
+        return UserService;
     });
     app.controller('NavigationController', function () {
 
     });
     app.controller('TodayController', function () {
-        var vm = this;
-        vm.title = 'Napi nézet';
+a
     });
     app.controller('UserListController', ['UserService', function (UserService) {
         var vm = this;
@@ -291,18 +321,26 @@
             headers: ['Id', 'Név', 'Visszatartás', 'Megjegyzés', 'Műveletek'],
             data: null
         };
+
+        function loadList() {
+            ProjectService.getAllProjects(function(data){
+                vm.tableConfig.data = data;
+            });
+        }
+
         ProjectService.getAllProjects(function(data){
             vm.tableConfig.data = data;
         });
         vm.deleteProject = function (id) {
             ProjectService.deleteProject(id, function(success){
                 if(success) {
-                    console.log('DELETE SUCCESS');
+                    loadList();
                 } else {
                     console.log('DELETE FAILED');
                 }
             })
         };
+        loadList();
     }]);
     app.controller('ProjectCreateController', ['$location', 'ProjectService', function ($location, ProjectService) {
         var vm = this;
@@ -350,25 +388,35 @@
             });
         };
     }]);
-    app.controller('StatusListController', ['StatusService', function (StatusService) {
+    app.controller('StatusListController', ['StatusService', 'ngToast', function (StatusService, ngToast) {
         var vm = this;
         vm.searchField = '';
         vm.tableConfig = {
             headers: ['Id', 'Név', 'Műveletek'],
             data: null
         };
-        StatusService.getAllStatuses(function(data){
-            vm.tableConfig.data = data;
-        });
+        function loadList() {
+            StatusService.getAllStatuses(function(data){
+                vm.tableConfig.data = data;
+            });
+        }
         vm.deleteStatus = function (id) {
             StatusService.deleteStatus(id, function(success){
                 if(success) {
-                    console.log('DELETE SUCCESS');
+                    ngToast.success({
+                        content: 'Sikeres törlés!',
+                        animation: 'fade'
+                    });
+                    loadList();
                 } else {
-                    console.log('DELETE FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen törlés!',
+                        animation: 'fade'
+                    });
                 }
             })
         };
+        loadList();
     }]);
     app.controller('StatusCreateController', ['$location', 'StatusService', function ($location, StatusService) {
         var vm = this;
@@ -385,7 +433,7 @@
             })
         };
     }]);
-    app.controller('StatusEditController', ['$routeParams', '$location', 'StatusService', function ($routeParams, $location, StatusService) {
+    app.controller('StatusEditController', ['$routeParams', '$location', 'StatusService', 'ngToast' , function ($routeParams, $location, StatusService, ngToast) {
         var vm = this;
         var statusId = $routeParams.id;
         vm.status = {
@@ -403,6 +451,9 @@
         vm.editStatus = function() {
             StatusService.editStatus(vm.status, statusId, function(success){
                 if(success) {
+                    ngToast.success({
+                        content: 'Sikeres módosítás!'
+                    });
                     $location.path('/status');
                 } else {
                     console.log('STATUS EDIT FAILED');
