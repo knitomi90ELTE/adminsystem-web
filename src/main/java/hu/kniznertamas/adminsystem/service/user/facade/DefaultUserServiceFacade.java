@@ -1,6 +1,8 @@
 package hu.kniznertamas.adminsystem.service.user.facade;
 
 import hu.kniznertamas.adminsystem.service.user.domain.User;
+import hu.kniznertamas.adminsystem.service.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -11,28 +13,31 @@ import java.util.Set;
 @Service
 public class DefaultUserServiceFacade implements UserServiceFacade {
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public Long create(User user) {
-        return null;
+        return userService.createUser(user);
     }
 
     @Override
     public Long edit(User user) {
-        return null;
+        return userService.editUser(user);
     }
 
     @Override
     public void delete(Long id) {
-
+        userService.deleteUser(id);
     }
 
     @Override
     public User findById(Long id) {
-        return null;
+        return userService.findUserById(id);
     }
 
     @Override
     public Set<User> findAll() {
-        return null;
+        return userService.findAllUsers();
     }
 }

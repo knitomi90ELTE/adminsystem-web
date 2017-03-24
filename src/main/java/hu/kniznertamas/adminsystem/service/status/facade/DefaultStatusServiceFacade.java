@@ -1,6 +1,8 @@
 package hu.kniznertamas.adminsystem.service.status.facade;
 
 import hu.kniznertamas.adminsystem.service.status.domain.Status;
+import hu.kniznertamas.adminsystem.service.status.service.StatusService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -11,28 +13,31 @@ import java.util.Set;
 @Service
 public class DefaultStatusServiceFacade implements StatusServiceFacade {
 
+    @Autowired
+    private StatusService statusService;
+
     @Override
     public Long create(Status status) {
-        return null;
+        return statusService.createStatus(status);
     }
 
     @Override
     public Long edit(Status status) {
-        return null;
+        return statusService.editStatus(status);
     }
 
     @Override
     public void delete(Long id) {
-
+        statusService.deleteStatus(id);
     }
 
     @Override
     public Status findById(Long id) {
-        return null;
+        return statusService.findStatusById(id);
     }
 
     @Override
     public Set<Status> findAll() {
-        return null;
+        return statusService.findAllStatuses();
     }
 }
