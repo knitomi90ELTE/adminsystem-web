@@ -1,7 +1,7 @@
 package hu.kniznertamas.adminsystem.web.user.domain.response;
 
 /**
- * UserView
+ * TimeReportView
  */
 public class UserView {
 

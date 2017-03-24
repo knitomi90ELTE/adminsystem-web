@@ -1,7 +1,7 @@
 package hu.kniznertamas.adminsystem.web.user.domain.request;
 
 /**
- * UserRequest
+ * TimeReportRequest
  */
 public class UserRequest {
 
