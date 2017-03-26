@@ -4,6 +4,7 @@ import hu.kniznertamas.adminsystem.dal.user.entity.UserEntity;
 import hu.kniznertamas.adminsystem.service.user.domain.User;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +34,12 @@ public class UserTransformer {
     }
 
     public Set<User> transform(List<UserEntity> userEntities) {
-        return userEntities.stream().map(this::transform).collect(Collectors.toSet());
+        Set<User> result;
+        if(userEntities.isEmpty()) {
+            result = Collections.emptySet();
+        } else {
+            result = userEntities.stream().map(this::transform).collect(Collectors.toSet());
+        }
+        return result;
     }
 }

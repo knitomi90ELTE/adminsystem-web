@@ -20,4 +20,10 @@ public interface TimeReportViewFacade {
 
     Set<TimeReportView> findAll();
 
+    Set<TimeReportView> findTimeReportsByDate(String date);
+
+    Set<TimeReportView> findTimeReportsByUserId(Long userId);
+
+    Set<TimeReportView> findTimeReportsByProjectId(Long projectId);
+
 }

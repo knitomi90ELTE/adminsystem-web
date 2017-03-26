@@ -3,40 +3,30 @@
 
     var app = angular.module('AdminSystem', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast']);
     app.factory('ResourceDao', ['$resource', function($resource) {
-
         return function(url, uriParams) {
             return new ResourceDao(url, uriParams, $resource);
         };
-
         function ResourceDao(url, uriParams, $resource) {
             var vm = this;
-
             vm.get = get;
             vm.list = list;
             vm.post = post;
             vm.remove = remove;
-
             var resource = $resource(url, uriParams);
-
             function get(requestParams) {
                 return resource.get(requestParams).$promise;
             }
-
             function list(requestParams) {
                 return resource.query(requestParams).$promise;
             }
-
             function post(requestParams) {
                 return resource.save(requestParams).$promise;
             }
-
             function remove(requestParams) {
                 return resource.remove(requestParams).$promise;
             }
-
             return vm;
         }
-
     }]);
     app.factory('httpErrorInterceptor', ['$q', '$window', function($q, $window) {
         var result = {};
@@ -62,8 +52,100 @@
         }
         return result;
     }]);
+    app.service('TimeReportService', ['ResourceDao', function(ResourceDao) {
+        var TimeReportService = this;
+        var urlBase = '/api/timereport/';
+        TimeReportService.createTimeReport = function (newReport, callback) {
+            var data = new ResourceDao(urlBase + 'create');
+            data.post(newReport).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
+        };
+        TimeReportService.editTimeReport = function (editedReport, id, callback) {
+            var data = new ResourceDao(urlBase + 'edit/' + id);
+            data.post(editedReport).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
+        };
+        TimeReportService.getTimeReportById = function (id, callback) {
+            var data = new ResourceDao(urlBase + id);
+            data.get().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
+        TimeReportService.deleteTimeReport = function (id, callback) {
+            var data = new ResourceDao(urlBase + 'delete/' + id);
+            data.post().then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
+        };
+        TimeReportService.getAllTimeReports = function(callback) {
+            var data = new ResourceDao(urlBase + 'list');
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
+        TimeReportService.getAllTimeReportsByDate = function(date, callback) {
+            var data = new ResourceDao(urlBase + 'date/' + date);
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
+        TimeReportService.getAllTimeReportsByUserId = function(userId, callback) {
+            var data = new ResourceDao(urlBase + 'user/' + userId);
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
+        TimeReportService.getAllTimeReportsByProjectId = function(projectId, callback) {
+            var data = new ResourceDao(urlBase + 'project/' + projectId);
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
+    }]);
     app.service('StatusService',['ResourceDao', function(ResourceDao) {
-        var StatusService = {};
+        var StatusService = this;
         var urlBase = '/api/status/';
         StatusService.createStatus = function (newStatus, callback) {
             var data = new ResourceDao(urlBase + 'create');
@@ -120,10 +202,9 @@
                 }
             );
         };
-        return StatusService;
     }]);
     app.service('ProjectService',['ResourceDao', function (ResourceDao) {
-        var ProjectService = {};
+        var ProjectService = this;
         var urlBase = '/api/project/'
         ProjectService.createProject = function (newProject, callback) {
             var data = new ResourceDao(urlBase + 'create');
@@ -180,10 +261,9 @@
                 }
             );
         };
-        return ProjectService;
     }]);
-    app.service('UserService', function () {
-        var UserService = {};
+    app.service('UserService',['ResourceDao', function (ResourceDao) {
+        var UserService = this;
         var urlBase = '/api/user/';
         UserService.createUser = function (newUser, callback) {
             var data = new ResourceDao(urlBase + 'create');
@@ -240,33 +320,52 @@
                 }
             );
         };
-        return UserService;
-    });
+    }]);
     app.controller('NavigationController', function () {
 
     });
-    app.controller('TodayController', function () {
-a
-    });
-    app.controller('UserListController', ['UserService', function (UserService) {
+    app.controller('TodayController',['TimeReportService', function (TimeReportService) {
+        var vm = this;
+        vm.selectedDate = new Date();
+        vm.timeReportTableConfig = {
+            headers: ['Id', 'Alkalmazott', 'Munka', 'Óraszám', 'Megjegyzés', 'Műveletek'],
+            data: null
+        };
+        vm.loadData = function () {
+            var formattedDate = vm.selectedDate.toISOString().substring(0, 10).replace(/-/g,'');
+            console.log(formattedDate);
+            TimeReportService.getAllTimeReportsByDate(formattedDate, function(data){
+                vm.timeReportTableConfig.data = data;
+            });
+        }
+        vm.loadData();
+    }]);
+    app.controller('UserListController', ['UserService', 'ngToast', function (UserService, ngToast) {
         var vm = this;
         vm.searchField = '';
         vm.tableConfig = {
             headers: ['Id', 'Név', 'Órabér', 'Megjegyzés', 'Műveletek'],
             data: null
         };
-        UserService.getAllUsers(function(data){
-            vm.tableConfig.data = data;
-        });
+        function loadList() {
+            UserService.getAllUsers(function(data){
+                vm.tableConfig.data = data;
+            });
+        }
         vm.deleteUser = function (id) {
             UserService.deleteUser(id, function(success){
                 if(success) {
-                    console.log('DELETE SUCCESS');
+                    ngToast.success({
+                        content: 'Sikeres törlés!',
+                        animation: 'fade'
+                    });
+                    loadList();
                 } else {
                     console.log('DELETE FAILED');
                 }
             })
         };
+        loadList();
     }]);
     app.controller('UserCreateController', ['$location', 'UserService', function ($location, UserService) {
         var vm = this;
@@ -314,26 +413,25 @@ a
             });
         };
     }]);
-    app.controller('ProjectListController', ['ProjectService', function (ProjectService) {
+    app.controller('ProjectListController', ['ProjectService', 'ngToast', function (ProjectService, ngToast) {
         var vm = this;
         vm.searchField = '';
         vm.tableConfig = {
             headers: ['Id', 'Név', 'Visszatartás', 'Megjegyzés', 'Műveletek'],
             data: null
         };
-
         function loadList() {
             ProjectService.getAllProjects(function(data){
                 vm.tableConfig.data = data;
             });
         }
-
-        ProjectService.getAllProjects(function(data){
-            vm.tableConfig.data = data;
-        });
         vm.deleteProject = function (id) {
             ProjectService.deleteProject(id, function(success){
                 if(success) {
+                    ngToast.success({
+                        content: 'Sikeres törlés!',
+                        animation: 'fade'
+                    });
                     loadList();
                 } else {
                     console.log('DELETE FAILED');

@@ -7,6 +7,7 @@ import hu.kniznertamas.adminsystem.service.timereport.domain.TimeReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -48,4 +49,18 @@ public class DefaultTimeReportDao implements TimeReportDao {
         return timeReportRepository.exists(id);
     }
 
+    @Override
+    public Set<TimeReport> findByUserId(Long userId) {
+        return timeReportTransformer.transform(timeReportRepository.findByUserEntityId(userId));
+    }
+
+    @Override
+    public Set<TimeReport> findByProjectId(Long projectId) {
+        return timeReportTransformer.transform(timeReportRepository.findByProjectEntityId(projectId));
+    }
+
+    @Override
+    public Set<TimeReport> findByDate(LocalDate date) {
+        return timeReportTransformer.transform(timeReportRepository.findByCreated(date));
+    }
 }

@@ -20,6 +20,9 @@ public class TimeReportController {
     private static final String DELETE_TIME_REPORT_MAPPING = "/api/timereport/delete/{id}";
     private static final String LIST_TIME_REPORT_MAPPING = "/api/timereport/list";
     private static final String GET_TIME_REPORT_MAPPING = "/api/timereport/{id}";
+    private static final String GET_TIME_REPORT_BY_DATE_MAPPING = "/api/timereport/date/{date}";
+    private static final String GET_TIME_REPORT_BY_PROJECT_ID_MAPPING = "/api/timereport/project/{projectId}";
+    private static final String GET_TIME_REPORT_BY_USER_ID_MAPPING = "/api/timereport/user/{userId}";
 
     @Autowired
     private TimeReportViewFacade timeReportViewFacade;
@@ -50,6 +53,21 @@ public class TimeReportController {
     @RequestMapping(value = GET_TIME_REPORT_MAPPING, method = RequestMethod.GET)
     public TimeReportView getTimeReportById(@PathVariable Long id) {
         return timeReportViewFacade.findTimeReportById(id);
+    }
+
+    @RequestMapping(value = GET_TIME_REPORT_BY_DATE_MAPPING, method = RequestMethod.GET)
+    public Set<TimeReportView> getTimeReportsByDate(@PathVariable String date) {
+        return timeReportViewFacade.findTimeReportsByDate(date);
+    }
+
+    @RequestMapping(value = GET_TIME_REPORT_BY_USER_ID_MAPPING, method = RequestMethod.GET)
+    public Set<TimeReportView> getTimeReportsByUserId(@PathVariable Long userId) {
+        return timeReportViewFacade.findTimeReportsByUserId(userId);
+    }
+
+    @RequestMapping(value = GET_TIME_REPORT_BY_PROJECT_ID_MAPPING, method = RequestMethod.GET)
+    public Set<TimeReportView> getTimeReportsByProjectId(@PathVariable Long projectId) {
+        return timeReportViewFacade.findTimeReportsByProjectId(projectId);
     }
 
 }

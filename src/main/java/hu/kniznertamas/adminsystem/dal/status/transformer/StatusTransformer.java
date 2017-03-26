@@ -4,6 +4,7 @@ import hu.kniznertamas.adminsystem.dal.status.entity.StatusEntity;
 import hu.kniznertamas.adminsystem.service.status.domain.Status;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,7 +30,13 @@ public class StatusTransformer {
     }
 
     public Set<Status> transform(List<StatusEntity> statusEntities) {
-        return statusEntities.stream().map(this::transform).collect(Collectors.toSet());
+        Set<Status> result;
+        if(statusEntities.isEmpty()) {
+            result = Collections.emptySet();
+        } else {
+            result = statusEntities.stream().map(this::transform).collect(Collectors.toSet());
+        }
+        return result;
     }
 
 }

@@ -7,7 +7,8 @@ import hu.kniznertamas.adminsystem.service.timereport.domain.TimeReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,8 +46,14 @@ public class TimeReportTransformer {
         return timeReport;
     }
 
-    public Set<TimeReport> transform(List<TimeReportEntity> timeReportEntities) {
-        return timeReportEntities.stream().map(this::transform).collect(Collectors.toSet());
+    public Set<TimeReport> transform(Collection<TimeReportEntity> timeReportEntities) {
+        Set<TimeReport> result;
+        if(timeReportEntities.isEmpty()) {
+            result = Collections.emptySet();
+        } else {
+            result = timeReportEntities.stream().map(this::transform).collect(Collectors.toSet());
+        }
+        return result;
     }
 
 }

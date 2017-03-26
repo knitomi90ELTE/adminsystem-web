@@ -40,4 +40,19 @@ public class DefaultTimeReportServiceFacade implements TimeReportServiceFacade {
     public Set<TimeReport> findAll() {
         return timeReportService.findAllTimeReports();
     }
+
+    @Override
+    public Set<TimeReport> findByUserId(Long userId) {
+        return timeReportService.findByUserId(userId);
+    }
+
+    @Override
+    public Set<TimeReport> findByProjectId(Long projectId) {
+        return timeReportService.findByProjectId(projectId);
+    }
+
+    @Override
+    public Set<TimeReport> findByDate(String date) {
+        return timeReportService.findByDate(date);
+    }
 }
