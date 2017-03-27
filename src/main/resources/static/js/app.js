@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('AdminSystem', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast']);
+    var app = angular.module('AdminSystem', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast', 'ngAnimate', 'ui.bootstrap']);
     app.factory('ResourceDao', ['$resource', function($resource) {
         return function(url, uriParams) {
             return new ResourceDao(url, uriParams, $resource);
@@ -324,20 +324,33 @@
     app.controller('NavigationController', function () {
 
     });
-    app.controller('TodayController',['TimeReportService', function (TimeReportService) {
+    app.controller('TodayController',['$scope', 'TimeReportService', function ($scope, TimeReportService) {
         var vm = this;
         vm.selectedDate = new Date();
+        vm.datepicker = {
+            opened: false,
+            options: {
+                placement: 'bottom'
+            }
+        };
+        vm.openDatePicker = function() {
+            vm.datepicker.opened = true;
+        };
         vm.timeReportTableConfig = {
             headers: ['Id', 'Alkalmazott', 'Munka', 'Óraszám', 'Megjegyzés', 'Műveletek'],
             data: null
         };
         vm.loadData = function () {
             var formattedDate = vm.selectedDate.toISOString().substring(0, 10).replace(/-/g,'');
-            console.log(formattedDate);
             TimeReportService.getAllTimeReportsByDate(formattedDate, function(data){
                 vm.timeReportTableConfig.data = data;
             });
-        }
+        };
+        $scope.$watch(function() {
+            return vm.selectedDate;
+        }, function(current, original) {
+            vm.loadData();
+        });
         vm.loadData();
     }]);
     app.controller('UserListController', ['UserService', 'ngToast', function (UserService, ngToast) {
