@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('AdminSystem', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast', 'ngAnimate', 'ui.bootstrap']);
+    var app = angular.module('AdminSystem', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast', 'ngAnimate', 'ui.bootstrap', 'ui.select']);
     app.factory('ResourceDao', ['$resource', function($resource) {
         return function(url, uriParams) {
             return new ResourceDao(url, uriParams, $resource);
@@ -324,18 +324,50 @@
     app.controller('NavigationController', function () {
 
     });
-    app.controller('TodayController',['$scope', 'TimeReportService', function ($scope, TimeReportService) {
+    app.controller('TodayController',['$scope', 'TimeReportService', '$uibModal', 'ngToast', function ($scope, TimeReportService, $uibModal, ngToast) {
         var vm = this;
         vm.selectedDate = new Date();
         vm.datepicker = {
             opened: false,
             options: {
-                placement: 'bottom'
+                startingDay: 1
             }
         };
         vm.openDatePicker = function() {
             vm.datepicker.opened = true;
         };
+
+        vm.openNewReport = function() {
+            var modal = $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'html/components/new-report-modal.html',
+                controller: 'NewReportModalController',
+                controllerAs: 'ctrl',
+                size: 'lg',
+            });
+            modal.result.then(function (newReport) {
+                newReport.created = vm.selectedDate.toISOString().substring(0, 10);
+                TimeReportService.createTimeReport(newReport, function(success) {
+                    if(success) {
+                        ngToast.success({
+                            content: 'Sikeres mentés!',
+                            animation: 'fade'
+                        });
+                        vm.loadData();
+                    } else {
+                        ngToast.danger({
+                            content: 'Sikertelen mentés!',
+                            animation: 'fade'
+                        });
+                    }
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        };
+
         vm.timeReportTableConfig = {
             headers: ['Id', 'Alkalmazott', 'Munka', 'Óraszám', 'Megjegyzés', 'Műveletek'],
             data: null
@@ -352,6 +384,35 @@
             vm.loadData();
         });
         vm.loadData();
+    }]);
+    app.controller('NewReportModalController', ['$uibModalInstance', 'UserService', 'ProjectService', function($uibModalInstance, UserService, ProjectService){
+        var vm = this;
+        vm.users = [];
+        vm.projects = [];
+        UserService.getAllUsers(function(data){
+            vm.users = data;
+        });
+        ProjectService.getAllProjects(function(data){
+            vm.projects = data;
+        });
+        vm.form = {
+            user: null,
+            project: null,
+            hour: 0.0,
+            note: ''
+        };
+        vm.ok = function() {
+            var newReport = {
+                userId: vm.form.user.id,
+                projectId: vm.form.project.id,
+                hour: vm.form.hour,
+                note: vm.form.note,
+            };
+            $uibModalInstance.close(newReport);
+        };
+        vm.cancel = function() {
+            $uibModalInstance.dismiss();
+        };
     }]);
     app.controller('UserListController', ['UserService', 'ngToast', function (UserService, ngToast) {
         var vm = this;
@@ -376,7 +437,7 @@
                 } else {
                     console.log('DELETE FAILED');
                 }
-            })
+            });
         };
         loadList();
     }]);

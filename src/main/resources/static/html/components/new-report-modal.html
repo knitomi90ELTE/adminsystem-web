@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title">Új hozzáadása</h3>
+</div>
+<div class="modal-body" id="modal-body">
+    <form name="reportForm">
+        <div class="form-group">
+            <label>Alkalmazott</label>
+            <ui-select id="selectedUser" theme="bootstrap" ng-model="ctrl.form.user">
+                <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="user in ctrl.users | filter: $select.search">{{user.name}}</ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group">
+            <label>Munka</label>
+            <ui-select id="selectedUser" theme="bootstrap" ng-model="ctrl.form.project">
+                <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="project in ctrl.projects | filter: $select.search">{{project.name}}</ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group">
+            <label for="hours">Órák</label>
+            <input type="number" id="hours" class="form-control" step="any" ng-model="ctrl.form.hour">
+        </div>
+        <div class="form-group">
+            <label for="note">Megjegyzés</label>
+            <input type="text" id="note" class="form-control" placeholder="Megjegyzés" ng-model="ctrl.form.note">
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" type="button" ng-click="ctrl.cancel()">Mégse</button>
+    <button class="btn btn-success" type="button" ng-click="ctrl.ok()">Mentés</button>
+</div>
