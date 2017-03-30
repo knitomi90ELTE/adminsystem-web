@@ -1,4 +1,4 @@
-package hu.kniznertamas.adminsystem.dal.balance.type;
+package hu.kniznertamas.adminsystem.service.balance.type;
 
 /**
  * Created by Tamas_Knizner on 2017-03-29.

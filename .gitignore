@@ -8,7 +8,7 @@ target/
 .apt_generated
 .classpath
 .factorypath
-.project
+.balance
 .settings
 .springBeans
 
@@ -44,7 +44,7 @@ local.properties
 .recommenders
 
 # Eclipse Core
-.project
+.balance
 
 # External tool builders
 .externalToolBuilders/
@@ -71,7 +71,7 @@ local.properties
 .target
 
 # Tern plugin
-.tern-project
+.tern-balance
 
 # TeXlipse plugin
 .texlipse
@@ -115,7 +115,7 @@ local.properties
 # Mongo Explorer plugin:
 .idea/**/mongoSettings.xml
 
-## File-based project format:
+## File-based balance format:
 *.iws
 
 ## Plugin-specific files:
@@ -182,7 +182,7 @@ hs_err_pid*
 
 # Mongo Explorer plugin:
 
-## File-based project format:
+## File-based balance format:
 
 ## Plugin-specific files:
 
