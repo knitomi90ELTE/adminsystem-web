@@ -1,29 +1,25 @@
-package hu.kniznertamas.adminsystem.service.balance.domain;
+package hu.kniznertamas.adminsystem.web.balance.domain.response;
 
-import hu.kniznertamas.adminsystem.service.balance.type.BalanceType;
-import hu.kniznertamas.adminsystem.service.project.domain.Project;
-import hu.kniznertamas.adminsystem.service.status.domain.Status;
-import hu.kniznertamas.adminsystem.service.user.domain.User;
-
-import java.time.LocalDate;
+import hu.kniznertamas.adminsystem.web.project.domain.response.ProjectView;
+import hu.kniznertamas.adminsystem.web.status.domain.response.StatusView;
+import hu.kniznertamas.adminsystem.web.user.domain.response.UserView;
 
 /**
- * Created by Tamas_Knizner on 2017-03-29.
- * Balance domain object.
+ * Created by Tamas_Knizner on 2017-03-31.
  */
-public class Balance {
+public class BalanceView {
 
     private Long id;
     private Integer net;
     private Integer gross;
     private Integer vat;
     private Integer vatValue;
-    private LocalDate created;
-    private LocalDate completed;
-    private Status status;
-    private Project project;
-    private User user;
-    private BalanceType balanceType;
+    private String created;
+    private String completed;
+    private StatusView statusView;
+    private ProjectView projectView;
+    private UserView userView;
+    private String balanceType;
     private Boolean cash;
     private String note;
 
@@ -67,51 +63,51 @@ public class Balance {
         this.vatValue = vatValue;
     }
 
-    public LocalDate getCreated() {
+    public String getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDate created) {
+    public void setCreated(String created) {
         this.created = created;
     }
 
-    public LocalDate getCompleted() {
+    public String getCompleted() {
         return completed;
     }
 
-    public void setCompleted(LocalDate completed) {
+    public void setCompleted(String completed) {
         this.completed = completed;
     }
 
-    public Status getStatus() {
-        return status;
+    public StatusView getStatusView() {
+        return statusView;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatusView(StatusView statusView) {
+        this.statusView = statusView;
     }
 
-    public Project getProject() {
-        return project;
+    public ProjectView getProjectView() {
+        return projectView;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setProjectView(ProjectView projectView) {
+        this.projectView = projectView;
     }
 
-    public User getUser() {
-        return user;
+    public UserView getUserView() {
+        return userView;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserView(UserView userView) {
+        this.userView = userView;
     }
 
-    public BalanceType getBalanceType() {
+    public String getBalanceType() {
         return balanceType;
     }
 
-    public void setBalanceType(BalanceType balanceType) {
+    public void setBalanceType(String balanceType) {
         this.balanceType = balanceType;
     }
 

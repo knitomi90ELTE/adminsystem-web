@@ -1,5 +1,6 @@
 package hu.kniznertamas.adminsystem.dal.balance.entity;
 
+import hu.kniznertamas.adminsystem.dal.converter.LocalDateConverter;
 import hu.kniznertamas.adminsystem.dal.status.entity.StatusEntity;
 
 import javax.persistence.*;
@@ -28,9 +29,11 @@ public abstract class AbstractBalanceEntity {
     protected Integer vatValue;
 
     @Column(name = "created")
+    @Convert(converter = LocalDateConverter.class)
     protected LocalDate created;
 
     @Column(name = "completed")
+    @Convert(converter = LocalDateConverter.class)
     protected LocalDate completed;
 
     @ManyToOne

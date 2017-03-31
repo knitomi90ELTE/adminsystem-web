@@ -1,8 +1,8 @@
 package hu.kniznertamas.adminsystem.web.timereport.transformer;
 
-import hu.kniznertamas.adminsystem.service.project.facade.ProjectServiceFacade;
+import hu.kniznertamas.adminsystem.service.project.domain.Project;
 import hu.kniznertamas.adminsystem.service.timereport.domain.TimeReport;
-import hu.kniznertamas.adminsystem.service.user.facade.UserServiceFacade;
+import hu.kniznertamas.adminsystem.service.user.domain.User;
 import hu.kniznertamas.adminsystem.web.project.transformer.ProjectViewTransformer;
 import hu.kniznertamas.adminsystem.web.timereport.domain.request.TimeReportRequest;
 import hu.kniznertamas.adminsystem.web.timereport.domain.response.TimeReportView;
@@ -26,19 +26,17 @@ public class TimeReportViewTransformer {
     @Autowired
     private ProjectViewTransformer projectViewTransformer;
 
-    @Autowired
-    private UserServiceFacade userServiceFacade;
-
-    @Autowired
-    private ProjectServiceFacade projectServiceFacade;
-
     public TimeReport transform(TimeReportRequest timeReportRequest) {
         TimeReport timeReport = new TimeReport();
         timeReport.setCreated(LocalDate.parse(timeReportRequest.getCreated()));
         timeReport.setHour(timeReportRequest.getHour());
         timeReport.setNote(timeReportRequest.getNote());
-        timeReport.setUser(userServiceFacade.findById(timeReportRequest.getUserId()));
-        timeReport.setProject(projectServiceFacade.findById(timeReportRequest.getProjectId()));
+        User user = new User();
+        user.setId(timeReportRequest.getUserId());
+        Project project = new Project();
+        project.setId(timeReportRequest.getProjectId());
+        timeReport.setUser(user);
+        timeReport.setProject(project);
         return timeReport;
     }
 
