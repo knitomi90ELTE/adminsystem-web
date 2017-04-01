@@ -31,7 +31,6 @@
     app.factory('httpErrorInterceptor', ['$q', '$window', function($q, $window) {
         var result = {};
         result.responseError = responseError;
-
         function responseError(rejection) {
             if (rejection.status === 500) {
                 $window.location.href = '/error/unavailable';
@@ -43,7 +42,6 @@
     app.factory('notAuthorizedInterceptor', ['$q', '$window', function($q, $window) {
         var result = {};
         result.responseError = responseError;
-
         function responseError(rejection) {
             if (rejection.status === 403) {
                 $window.location.href = '/error/unauthorized';
@@ -51,6 +49,76 @@
             return $q.reject(rejection);
         }
         return result;
+    }]);
+    app.service('BalanceService', ['ResourceDao', function (ResourceDao) {
+        var BalanceService = this;
+        var urlBase = '/api/balance/';
+        BalanceService.createBalance = function (newBalance, callback) {
+            var data = new ResourceDao(urlBase + 'create');
+            data.post(newBalance).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
+        };
+        BalanceService.editBalance = function (editedBalance, id, callback) {
+            var data = new ResourceDao(urlBase + 'edit/' + id);
+            data.post(editedBalance).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
+        };
+        BalanceService.getBalanceById = function (id, type, callback) {
+            var data = new ResourceDao(urlBase + type + '/' + id);
+            data.get().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
+        BalanceService.deleteBalance = function (id, type, callback) {
+            var data = new ResourceDao(urlBase + 'delete/' + type + '/' + id);
+            data.post().then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
+        };
+        BalanceService.getAllBalances = function(callback) {
+            var data = new ResourceDao(urlBase + 'list');
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
+        BalanceService.getAllBalancesByType = function(type, callback) {
+            var data = new ResourceDao(urlBase + 'list/' + type);
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
     }]);
     app.service('TimeReportService', ['ResourceDao', function(ResourceDao) {
         var TimeReportService = this;

@@ -6,8 +6,6 @@ import hu.kniznertamas.adminsystem.service.balance.type.BalanceType;
 import hu.kniznertamas.adminsystem.web.balance.domain.request.BalanceRequest;
 import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 import hu.kniznertamas.adminsystem.web.balance.transformer.BalanceViewTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +16,6 @@ import java.util.Set;
  */
 @Component
 public class DefaultBalanceViewFacade implements BalanceViewFacade {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBalanceViewFacade.class);
 
     @Autowired
     private BalanceServiceFacade balanceServiceFacade;
@@ -34,14 +30,14 @@ public class DefaultBalanceViewFacade implements BalanceViewFacade {
 
     @Override
     public Long editBalance(BalanceRequest balanceRequest, Long id) {
-        return balanceServiceFacade.edit(balanceViewTransformer.transform(balanceRequest));
+        return balanceServiceFacade.edit(balanceViewTransformer.transform(balanceRequest, id));
     }
 
     @Override
     public void deleteBalance(Long id, String balanceType) {
         Balance balance = new Balance();
         balance.setId(id);
-        balance.setBalanceType(BalanceType.valueOf(balanceType));
+        balance.setBalanceType(BalanceType.valueOf(balanceType.toUpperCase()));
         balanceServiceFacade.delete(balance);
     }
 
@@ -49,15 +45,13 @@ public class DefaultBalanceViewFacade implements BalanceViewFacade {
     public BalanceView findBalanceById(Long id, String balanceType) {
         Balance balance = new Balance();
         balance.setId(id);
-        balance.setBalanceType(BalanceType.valueOf(balanceType));
+        balance.setBalanceType(BalanceType.valueOf(balanceType.toUpperCase()));
         return balanceViewTransformer.transform(balanceServiceFacade.findById(balance));
     }
 
     @Override
     public Set<BalanceView> findAll() {
-        Set<Balance> balances = balanceServiceFacade.findAll();
-        LOGGER.info("FINDALL: {}", balances);
-        return balanceViewTransformer.transform(balances);
+        return balanceViewTransformer.transform(balanceServiceFacade.findAll());
     }
 
     @Override

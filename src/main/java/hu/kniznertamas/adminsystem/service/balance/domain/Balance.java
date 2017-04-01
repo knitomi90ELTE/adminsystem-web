@@ -130,4 +130,23 @@ public class Balance {
     public void setNote(String note) {
         this.note = note;
     }
+
+    @Override
+    public String toString() {
+        return "Balance{" +
+                "id=" + id +
+                ", net=" + net +
+                ", gross=" + gross +
+                ", vat=" + vat +
+                ", vatValue=" + vatValue +
+                ", created=" + created +
+                ", completed=" + completed +
+                ", status=" + status +
+                ", project=" + project +
+                ", user=" + user +
+                ", balanceType=" + balanceType +
+                ", cash=" + cash +
+                ", note='" + note + '\'' +
+                '}';
+    }
 }

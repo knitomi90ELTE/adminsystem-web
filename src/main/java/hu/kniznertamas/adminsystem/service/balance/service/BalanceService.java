@@ -1,6 +1,9 @@
 package hu.kniznertamas.adminsystem.service.balance.service;
 
-import hu.kniznertamas.adminsystem.dal.balance.dao.BalanceDaoHolder;
+import hu.kniznertamas.adminsystem.dal.balance.other.dao.OtherBalanceDao;
+import hu.kniznertamas.adminsystem.dal.balance.project.dao.ProjectBalanceDao;
+import hu.kniznertamas.adminsystem.dal.balance.user.dao.UserBalanceDao;
+import hu.kniznertamas.adminsystem.dal.dao.GenericDao;
 import hu.kniznertamas.adminsystem.service.balance.domain.Balance;
 import hu.kniznertamas.adminsystem.service.balance.type.BalanceType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,32 +20,56 @@ import java.util.stream.Stream;
 public class BalanceService {
 
     @Autowired
-    private BalanceDaoHolder balanceDaoHolder;
+    private UserBalanceDao userBalanceDao;
+
+    @Autowired
+    private ProjectBalanceDao projectBalanceDao;
+
+    @Autowired
+    private OtherBalanceDao otherBalanceDao;
 
     public Long createBalance(Balance balance) {
-        return balanceDaoHolder.getDao(balance.getBalanceType()).save(balance);
+        return getDao(balance.getBalanceType()).save(balance);
     }
 
     public Long editBalance(Balance balance) {
-        return balanceDaoHolder.getDao(balance.getBalanceType()).save(balance);
+        return getDao(balance.getBalanceType()).save(balance);
     }
 
     public void deleteBalance(Long id, BalanceType balanceType) {
-        balanceDaoHolder.getDao(balanceType).delete(id);
+        getDao(balanceType).delete(id);
     }
 
     public Balance findBalanceById(Long id, BalanceType balanceType) {
-        return balanceDaoHolder.getDao(balanceType).findById(id);
+        return getDao(balanceType).findById(id);
     }
 
     public Set<Balance> findAllBalance() {
-        Stream<Balance> userBalances = balanceDaoHolder.getUserBalanceDao().findAll().stream();
-        Stream<Balance> projectBalances = balanceDaoHolder.getProjectBalanceDao().findAll().stream();
-        Stream<Balance> otherBalances = balanceDaoHolder.getOtherBalanceDao().findAll().stream();
+        Stream<Balance> userBalances = userBalanceDao.findAll().stream();
+        Stream<Balance> projectBalances = projectBalanceDao.findAll().stream();
+        Stream<Balance> otherBalances = otherBalanceDao.findAll().stream();
         return Stream.concat(Stream.concat(userBalances, projectBalances), otherBalances).collect(Collectors.toSet());
     }
 
     public Set<Balance> findAllByType(BalanceType balanceType) {
-        return balanceDaoHolder.getDao(balanceType).findAll();
+        return getDao(balanceType).findAll();
+    }
+
+    private GenericDao<Balance> getDao(BalanceType balanceType) {
+        GenericDao<Balance> dao;
+        switch (balanceType) {
+            case USER:
+                dao = userBalanceDao;
+                break;
+            case PROJECT:
+                dao = projectBalanceDao;
+                break;
+            case OTHER:
+                dao = otherBalanceDao;
+                break;
+            default:
+                dao = null;
+        }
+        return dao;
     }
 }

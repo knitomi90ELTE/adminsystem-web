@@ -16,9 +16,9 @@ public class BalanceView {
     private Integer vatValue;
     private String created;
     private String completed;
-    private StatusView statusView;
-    private ProjectView projectView;
-    private UserView userView;
+    private StatusView status;
+    private ProjectView project;
+    private UserView user;
     private String balanceType;
     private Boolean cash;
     private String note;
@@ -79,28 +79,28 @@ public class BalanceView {
         this.completed = completed;
     }
 
-    public StatusView getStatusView() {
-        return statusView;
+    public StatusView getStatus() {
+        return status;
     }
 
-    public void setStatusView(StatusView statusView) {
-        this.statusView = statusView;
+    public void setStatus(StatusView status) {
+        this.status = status;
     }
 
-    public ProjectView getProjectView() {
-        return projectView;
+    public ProjectView getProject() {
+        return project;
     }
 
-    public void setProjectView(ProjectView projectView) {
-        this.projectView = projectView;
+    public void setProject(ProjectView project) {
+        this.project = project;
     }
 
-    public UserView getUserView() {
-        return userView;
+    public UserView getUser() {
+        return user;
     }
 
-    public void setUserView(UserView userView) {
-        this.userView = userView;
+    public void setUser(UserView user) {
+        this.user = user;
     }
 
     public String getBalanceType() {

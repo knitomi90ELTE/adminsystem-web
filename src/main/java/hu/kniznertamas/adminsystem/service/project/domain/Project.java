@@ -41,4 +41,14 @@ public class Project {
     public void setNote(String note) {
         this.note = note;
     }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", retention=" + retention +
+                ", note='" + note + '\'' +
+                '}';
+    }
 }

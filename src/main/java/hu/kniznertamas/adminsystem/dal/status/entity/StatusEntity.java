@@ -15,18 +15,7 @@ public class StatusEntity {
 
     @Column(name = "name")
     private String name;
-/*
-    @Column(name = "creation_date", updatable = false)
-    @CreatedDate
-    private ZonedDateTime creationDate;
 
-    @Column(name = "modification_date")
-    @LastModifiedDate
-    private ZonedDateTime lastModificationDate;
-
-    @Version
-    private Long version;
-*/
     public Long getId() {
         return id;
     }
@@ -42,29 +31,4 @@ public class StatusEntity {
     public void setName(String name) {
         this.name = name;
     }
-/*
-    public ZonedDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(ZonedDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public ZonedDateTime getLastModificationDate() {
-        return lastModificationDate;
-    }
-
-    public void setLastModificationDate(ZonedDateTime lastModificationDate) {
-        this.lastModificationDate = lastModificationDate;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-*/
 }

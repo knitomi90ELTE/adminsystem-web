@@ -21,18 +21,7 @@ public class UserEntity {
 
     @Column(name = "note")
     private String note;
-/*
-    @Column(name = "creation_date", updatable = false)
-    @CreatedDate
-    private ZonedDateTime creationDate;
 
-    @Column(name = "modification_date")
-    @LastModifiedDate
-    private ZonedDateTime lastModificationDate;
-
-    @Version
-    private Long version;
-*/
     public Long getId() {
         return id;
     }
@@ -64,29 +53,4 @@ public class UserEntity {
     public void setNote(String note) {
         this.note = note;
     }
-/*
-    public ZonedDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(ZonedDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public ZonedDateTime getLastModificationDate() {
-        return lastModificationDate;
-    }
-
-    public void setLastModificationDate(ZonedDateTime lastModificationDate) {
-        this.lastModificationDate = lastModificationDate;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-*/
 }

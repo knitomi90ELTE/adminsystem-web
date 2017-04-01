@@ -16,13 +16,13 @@ public abstract class AbstractBalanceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(name = "net")
+    @Column(name = "netto")
     protected Integer net;
 
-    @Column(name = "gross")
+    @Column(name = "brutto")
     protected Integer gross;
 
-    @Column(name = "vat")
+    @Column(name = "afa")
     protected Integer vat;
 
     @Column(name = "afa_value")

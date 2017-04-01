@@ -10,8 +10,6 @@ import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 import hu.kniznertamas.adminsystem.web.project.transformer.ProjectViewTransformer;
 import hu.kniznertamas.adminsystem.web.status.transformer.StatusViewTransformer;
 import hu.kniznertamas.adminsystem.web.user.transformer.UserViewTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +22,6 @@ import java.util.stream.Collectors;
  */
 @Component
 public class BalanceViewTransformer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BalanceViewTransformer.class);
 
     @Autowired
     private UserViewTransformer userViewTransformer;
@@ -47,7 +43,13 @@ public class BalanceViewTransformer {
             balanceProject.setId(balanceRequest.getProjectId());
             balance.setProject(balanceProject);
         }
-        BalanceType.valueOf(balanceRequest.getBalanceType());
+        balance.setBalanceType(BalanceType.valueOf(balanceRequest.getBalanceType().toUpperCase()));
+        return balance;
+    }
+
+    public Balance transform(BalanceRequest balanceRequest, Long id) {
+        Balance balance = transform(balanceRequest);
+        balance.setId(id);
         return balance;
     }
 
@@ -70,13 +72,14 @@ public class BalanceViewTransformer {
     }
 
     public BalanceView transform(Balance balance) {
-        LOGGER.info("BALANCE: {}", balance);
         BalanceView balanceView = transformCommonProperties(balance);
         switch (balance.getBalanceType()) {
             case USER:
-                balanceView.setUserView(userViewTransformer.transform(balance.getUser()));
+                balanceView.setUser(userViewTransformer.transform(balance.getUser()));
+                break;
             case PROJECT:
-                balanceView.setProjectView(projectViewTransformer.transform(balance.getProject()));
+                balanceView.setProject(projectViewTransformer.transform(balance.getProject()));
+                break;
         }
         balanceView.setBalanceType(balance.getBalanceType().getValue());
         return balanceView;
@@ -90,7 +93,7 @@ public class BalanceViewTransformer {
         balanceView.setVat(balance.getVat());
         balanceView.setVatValue(balance.getVatValue());
         balanceView.setCreated(balance.getCreated().toString());
-        balanceView.setStatusView(statusViewTransformer.transform(balance.getStatus()));
+        balanceView.setStatus(statusViewTransformer.transform(balance.getStatus()));
         balanceView.setCash(balance.getCash());
         balanceView.setNote(balance.getNote());
         if(balance.getCompleted() != null) {

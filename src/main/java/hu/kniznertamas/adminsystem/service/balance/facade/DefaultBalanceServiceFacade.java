@@ -44,6 +44,6 @@ public class DefaultBalanceServiceFacade implements BalanceServiceFacade {
 
     @Override
     public Set<Balance> findAllByType(String balanceType) {
-        return balanceService.findAllByType(BalanceType.valueOf(balanceType));
+        return balanceService.findAllByType(BalanceType.valueOf(balanceType.toUpperCase()));
     }
 }
