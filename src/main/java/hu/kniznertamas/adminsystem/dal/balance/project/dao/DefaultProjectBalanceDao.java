@@ -7,6 +7,7 @@ import hu.kniznertamas.adminsystem.service.balance.domain.Balance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -46,5 +47,20 @@ public class DefaultProjectBalanceDao implements ProjectBalanceDao {
     @Override
     public boolean exists(Long id) {
         return projectBalanceRepository.exists(id);
+    }
+
+    @Override
+    public Set<Balance> findAllByCompleted(LocalDate completed) {
+        return projectBalanceTransformer.transform(projectBalanceRepository.findAllByCompleted(completed));
+    }
+
+    @Override
+    public Set<Balance> findAllByCompletedIsNull() {
+        return projectBalanceTransformer.transform(projectBalanceRepository.findAllByCompletedIsNull());
+    }
+
+    @Override
+    public Set<Balance> findAllByCompletedIsNotNull() {
+        return projectBalanceTransformer.transform(projectBalanceRepository.findAllByCompletedIsNotNull());
     }
 }

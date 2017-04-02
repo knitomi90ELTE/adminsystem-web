@@ -9,6 +9,8 @@ import hu.kniznertamas.adminsystem.service.balance.type.BalanceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,6 +55,28 @@ public class BalanceService {
 
     public Set<Balance> findAllByType(BalanceType balanceType) {
         return getDao(balanceType).findAll();
+    }
+
+    public Set<Balance> findAllBalanceByDate(String date) {
+        LocalDate completed = LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE);
+        Stream<Balance> userBalances = userBalanceDao.findAllByCompleted(completed).stream();
+        Stream<Balance> projectBalances = projectBalanceDao.findAllByCompleted(completed).stream();
+        Stream<Balance> otherBalances = otherBalanceDao.findAllByCompleted(completed).stream();
+        return Stream.concat(Stream.concat(userBalances, projectBalances), otherBalances).collect(Collectors.toSet());
+    }
+
+    public Set<Balance> findAllCompletedBalance() {
+        Stream<Balance> userBalances = userBalanceDao.findAllByCompletedIsNotNull().stream();
+        Stream<Balance> projectBalances = projectBalanceDao.findAllByCompletedIsNotNull().stream();
+        Stream<Balance> otherBalances = otherBalanceDao.findAllByCompletedIsNotNull().stream();
+        return Stream.concat(Stream.concat(userBalances, projectBalances), otherBalances).collect(Collectors.toSet());
+    }
+
+    public Set<Balance> findAllUncompletedBalance() {
+        Stream<Balance> userBalances = userBalanceDao.findAllByCompletedIsNull().stream();
+        Stream<Balance> projectBalances = projectBalanceDao.findAllByCompletedIsNull().stream();
+        Stream<Balance> otherBalances = otherBalanceDao.findAllByCompletedIsNull().stream();
+        return Stream.concat(Stream.concat(userBalances, projectBalances), otherBalances).collect(Collectors.toSet());
     }
 
     private GenericDao<Balance> getDao(BalanceType balanceType) {

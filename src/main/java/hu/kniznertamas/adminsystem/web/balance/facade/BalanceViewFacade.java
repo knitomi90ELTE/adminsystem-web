@@ -23,4 +23,9 @@ public interface BalanceViewFacade {
 
     Set<BalanceView> findAllBalanceByType(String balanceType);
 
+    Set<BalanceView> findAllBalanceByDate(String date);
+
+    Set<BalanceView> findAllCompletedBalance();
+
+    Set<BalanceView> findAllUncompletedBalance();
 }

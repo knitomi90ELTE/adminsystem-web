@@ -20,6 +20,9 @@ public class BalanceController {
     private static final String DELETE_BALANCE_MAPPING = "/api/balance/delete/{type}/{id}";
     private static final String FIND_BALANCE_BY_ID_MAPPING = "/api/balance/{type}/{id}";
     private static final String LIST_ALL_BALANCE_BY_TYPE_MAPPING = "/api/balance/list/{type}";
+    private static final String LIST_ALL_BALANCE_BY_DATE_MAPPING = "/api/balance/list/date/{date}";
+    private static final String LIST_ALL_COMPLETED_BALANCE_MAPPING = "/api/balance/list/completed";
+    private static final String LIST_ALL_UNCOMPLETED_BALANCE_MAPPING = "/api/balance/list/uncompleted";
 
     @Autowired
     private BalanceViewFacade balanceViewFacade;
@@ -52,6 +55,21 @@ public class BalanceController {
     @RequestMapping(value = FIND_BALANCE_BY_ID_MAPPING, method = RequestMethod.GET)
     public BalanceView findBalanceById(@PathVariable String type, @PathVariable Long id) {
         return balanceViewFacade.findBalanceById(id, type);
+    }
+
+    @RequestMapping(value = LIST_ALL_BALANCE_BY_DATE_MAPPING, method = RequestMethod.GET)
+    public Set<BalanceView> findAllByDate(@PathVariable String date) {
+        return balanceViewFacade.findAllBalanceByDate(date);
+    }
+
+    @RequestMapping(value = LIST_ALL_COMPLETED_BALANCE_MAPPING, method = RequestMethod.GET)
+    public Set<BalanceView> findAllCompletedBalance() {
+        return balanceViewFacade.findAllCompletedBalance();
+    }
+
+    @RequestMapping(value = LIST_ALL_UNCOMPLETED_BALANCE_MAPPING, method = RequestMethod.GET)
+    public Set<BalanceView> findAllUncompletedBalance() {
+        return balanceViewFacade.findAllUncompletedBalance();
     }
 
 }

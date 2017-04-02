@@ -11,6 +11,7 @@ public class RootController {
             "/user/**",
             "/project/**",
             "/status/**",
+            "/openitems",
             "/today"
     })
     public String index() {

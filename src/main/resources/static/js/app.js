@@ -404,13 +404,12 @@
         vm.openDatePicker = function() {
             vm.datepicker.opened = true;
         };
-
         vm.openNewReport = function() {
             var modal = $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'html/components/new-report-modal.html',
+                templateUrl: 'html/components/report-modal.html',
                 controller: 'NewReportModalController',
                 controllerAs: 'ctrl',
                 size: 'lg',
@@ -435,7 +434,54 @@
                 console.log('Modal dismissed at: ' + new Date());
             });
         };
-
+        vm.openEditReport= function(report) {
+            var modal = $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'html/components/report-modal.html',
+                controller: 'EditReportModalController',
+                controllerAs: 'ctrl',
+                size: 'lg',
+                resolve: {
+                    report: function () {
+                        return report;
+                    }
+                }
+            });
+            modal.result.then(function (editedReport) {
+                editedReport.created = vm.selectedDate.toISOString().substring(0, 10);
+                TimeReportService.editTimeReport(editedReport, editedReport.id, function(success) {
+                    if(success) {
+                        ngToast.success({
+                            content: 'Sikeres mentés!',
+                            animation: 'fade'
+                        });
+                        vm.loadData();
+                    } else {
+                        ngToast.danger({
+                            content: 'Sikertelen mentés!',
+                            animation: 'fade'
+                        });
+                    }
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
+        };
+        vm.deleteTimeReport = function (reportId) {
+            TimeReportService.deleteTimeReport(reportId, function(success){
+                if(success) {
+                    ngToast.success({
+                        content: 'Sikeres törlés!',
+                        animation: 'fade'
+                    });
+                    vm.loadData();
+                } else {
+                    console.log('DELETE FAILED');
+                }
+            });
+        };
         vm.timeReportTableConfig = {
             headers: ['Id', 'Alkalmazott', 'Munka', 'Óraszám', 'Megjegyzés', 'Műveletek'],
             data: null
@@ -455,6 +501,7 @@
     }]);
     app.controller('NewReportModalController', ['$uibModalInstance', 'UserService', 'ProjectService', function($uibModalInstance, UserService, ProjectService){
         var vm = this;
+        vm.title = 'Új hozzáadása';
         vm.users = [];
         vm.projects = [];
         UserService.getAllUsers(function(data){
@@ -481,6 +528,58 @@
         vm.cancel = function() {
             $uibModalInstance.dismiss();
         };
+    }]);
+    app.controller('EditReportModalController', function($uibModalInstance, UserService, ProjectService, report){
+        var vm = this;
+        vm.title = 'Szerkesztés';
+        vm.users = [];
+        vm.projects = [];
+        vm.form = {};
+        UserService.getAllUsers(function(data){
+            vm.users = data;
+            ProjectService.getAllProjects(function(data){
+                vm.projects = data;
+                vm.form = {
+                    user: report.user,
+                    project: report.project,
+                    hour: report.hour,
+                    note: report.note
+                };
+            });
+        });
+        vm.ok = function() {
+            var editedReport = {
+                id: report.id,
+                userId: vm.form.user.id,
+                projectId: vm.form.project.id,
+                hour: vm.form.hour,
+                note: vm.form.note,
+            };
+            $uibModalInstance.close(editedReport);
+        };
+        vm.cancel = function() {
+            $uibModalInstance.dismiss();
+        };
+    });
+    app.controller('OpenItemsController', ['BalanceService', function(BalanceService) {
+        var vm = this;
+        vm.searchField = '';
+        vm.tableConfig = {
+            headers: ['Id', 'Nettó', 'Bruttó', 'Áfa', 'Áfa értéke', 'Dátum', 'Teljesítés', 'Jelleg', 'Kapcsolat', 'Készpénzes', 'Megjegyzés', 'Műveletek'],
+            data: null,
+            filter: function(balance) {
+                console.log(balance.status.name);
+                console.log(balance.project.name);
+                console.log(balance.user.name);
+                return true;
+            }
+        };
+        function loadList() {
+            BalanceService.getAllBalances(function(data){
+                vm.tableConfig.data = data;
+            });
+        }
+        loadList();
     }]);
     app.controller('UserListController', ['UserService', 'ngToast', function (UserService, ngToast) {
         var vm = this;
@@ -736,6 +835,9 @@
             })
             .when('/status/edit/:id', {
                 templateUrl: PAGES + 'status/edit.html',
+            })
+            .when('/openitems', {
+                templateUrl: PAGES + 'balance/openitems.html',
             })
             .otherwise({ redirectTo: '/' });
         $locationProvider.html5Mode(true);

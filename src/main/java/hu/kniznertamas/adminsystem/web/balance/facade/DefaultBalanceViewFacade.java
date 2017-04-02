@@ -58,4 +58,19 @@ public class DefaultBalanceViewFacade implements BalanceViewFacade {
     public Set<BalanceView> findAllBalanceByType(String balanceType) {
         return balanceViewTransformer.transform(balanceServiceFacade.findAllByType(balanceType));
     }
+
+    @Override
+    public Set<BalanceView> findAllBalanceByDate(String date) {
+        return balanceViewTransformer.transform(balanceServiceFacade.findAllByDate(date));
+    }
+
+    @Override
+    public Set<BalanceView> findAllCompletedBalance() {
+        return balanceViewTransformer.transform(balanceServiceFacade.findAllCompleted());
+    }
+
+    @Override
+    public Set<BalanceView> findAllUncompletedBalance() {
+        return balanceViewTransformer.transform(balanceServiceFacade.findAllUncompleted());
+    }
 }

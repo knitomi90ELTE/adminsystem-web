@@ -46,4 +46,19 @@ public class DefaultBalanceServiceFacade implements BalanceServiceFacade {
     public Set<Balance> findAllByType(String balanceType) {
         return balanceService.findAllByType(BalanceType.valueOf(balanceType.toUpperCase()));
     }
+
+    @Override
+    public Set<Balance> findAllByDate(String date) {
+        return balanceService.findAllBalanceByDate(date);
+    }
+
+    @Override
+    public Set<Balance> findAllCompleted() {
+        return balanceService.findAllCompletedBalance();
+    }
+
+    @Override
+    public Set<Balance> findAllUncompleted() {
+        return balanceService.findAllUncompletedBalance();
+    }
 }

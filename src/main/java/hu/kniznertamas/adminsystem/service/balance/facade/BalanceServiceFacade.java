@@ -21,4 +21,11 @@ public interface BalanceServiceFacade {
 
     Set<Balance> findAllByType(String balanceType);
 
+    Set<Balance> findAllByDate(String date);
+
+    Set<Balance> findAllCompleted();
+
+    Set<Balance> findAllUncompleted();
+
+
 }
