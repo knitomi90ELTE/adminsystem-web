@@ -3,12 +3,12 @@
   <div class="row">
     <div class="col-lg-6">
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Filter" ng-model="ctrl.searchField">
+        <input type="text" class="form-control" placeholder="Filter" ng-model="search.$">
       </div>
     </div>
     <div class="col-lg-6">
       <div class="pull-right">
-        <a href="/timeReport/create" class="btn btn-success" role="button">Új státusz</a>
+        <a href="/status/create" class="btn btn-success" role="button">Új státusz</a>
       </div>
     </div>
   </div>
@@ -16,18 +16,25 @@
   <table class="table table-hover">
     <thead>
     <tr>
-      <th ng-repeat="header in ctrl.tableConfig.headers">{{header}}</th>
+      <th ng-repeat="header in ctrl.tableConfig.headers">
+        <a ng-if="header.prop !== null" ng-click="ctrl.tableConfig.sorting.type = header.prop; ctrl.tableConfig.sorting.reverse = !ctrl.tableConfig.sorting.reverse">
+          {{header.name}}
+          <span ng-if="ctrl.tableConfig.sorting.type === header.prop && !ctrl.tableConfig.sorting.reverse" class="glyphicon glyphicon-chevron-down"></span>
+          <span ng-if="ctrl.tableConfig.sorting.type === header.prop && ctrl.tableConfig.sorting.reverse" class="glyphicon glyphicon-chevron-up"></span>
+        </a>
+        <span ng-if="header.prop === null">{{header.name}}</span>
+      </th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="timeReport in ctrl.tableConfig.data | filter: {name: ctrl.searchField}">
-      <td>{{timeReport.id}}</td>
-      <td>{{timeReport.name}}</td>
+    <tr ng-repeat="status in ctrl.tableConfig.data | orderBy:ctrl.tableConfig.sorting.type:ctrl.tableConfig.sorting.reverse | filter:search">
+      <td>{{status.id}}</td>
+      <td>{{status.name}}</td>
       <td>
-        <a href="/timeReport/edit/{{timeReport.id}}" class="btn btn-warning btn-sm" role="button">
+        <a href="/status/edit/{{status.id}}" class="btn btn-warning btn-sm" role="button">
           <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
         </a>
-        <button type="button" class="btn btn-danger btn-sm" ng-click="ctrl.deleteStatus(timeReport.id)">
+        <button type="button" class="btn btn-danger btn-sm" ng-click="ctrl.deleteStatus(status.id)">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </td>

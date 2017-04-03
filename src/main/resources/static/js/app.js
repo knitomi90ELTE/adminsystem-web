@@ -478,7 +478,10 @@
                     });
                     vm.loadData();
                 } else {
-                    console.log('DELETE FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen törlés!',
+                        animation: 'fade'
+                    });
                 }
             });
         };
@@ -566,13 +569,7 @@
         vm.searchField = '';
         vm.tableConfig = {
             headers: ['Id', 'Nettó', 'Bruttó', 'Áfa', 'Áfa értéke', 'Dátum', 'Teljesítés', 'Jelleg', 'Kapcsolat', 'Készpénzes', 'Megjegyzés', 'Műveletek'],
-            data: null,
-            filter: function(balance) {
-                console.log(balance.status.name);
-                console.log(balance.project.name);
-                console.log(balance.user.name);
-                return true;
-            }
+            data: null
         };
         function loadList() {
             BalanceService.getAllBalances(function(data){
@@ -583,9 +580,17 @@
     }]);
     app.controller('UserListController', ['UserService', 'ngToast', function (UserService, ngToast) {
         var vm = this;
-        vm.searchField = '';
         vm.tableConfig = {
-            headers: ['Id', 'Név', 'Órabér', 'Megjegyzés', 'Műveletek'],
+            headers: [
+                { name: 'Id', prop: 'id'},
+                { name: 'Név', prop: 'name'},
+                { name: 'Órabér', prop: 'wage'},
+                { name: 'Megjegyzés', prop: 'note'},
+                { name: 'Műveletek', prop: null}],
+            sorting: {
+                type: 'name',
+                reverse: false,
+            },
             data: null
         };
         function loadList() {
@@ -602,13 +607,16 @@
                     });
                     loadList();
                 } else {
-                    console.log('DELETE FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen törlés!',
+                        animation: 'fade'
+                    });
                 }
             });
         };
         loadList();
     }]);
-    app.controller('UserCreateController', ['$location', 'UserService', function ($location, UserService) {
+    app.controller('UserCreateController', ['$location', 'UserService', 'ngToast', function ($location, UserService, ngToast) {
         var vm = this;
         vm.user = {
             name: '',
@@ -618,14 +626,21 @@
         vm.createUser = function () {
             UserService.createUser(vm.user, function(success) {
                 if(success) {
+                    ngToast.success({
+                        content: 'Mentés sikeres!',
+                        animation: 'fade'
+                    });
                     $location.path('/user');
                 } else {
-                    console.log('USER CREATION FAILED');
+                    ngToast.danger({
+                        content: 'Mentés sikertelen!',
+                        animation: 'fade'
+                    });
                 }
             })
         };
     }]);
-    app.controller('UserEditController', ['$routeParams', '$location', 'UserService', function ($routeParams, $location, UserService) {
+    app.controller('UserEditController', ['$routeParams', '$location', 'UserService', 'ngToast', function ($routeParams, $location, UserService, ngToast) {
         var vm = this;
         var userId = $routeParams.id;
         vm.user = {
@@ -641,24 +656,42 @@
                     note: data.note
                 }
             } else {
-                console.log('User with id ' + userId + ' not found!');
+                ngToast.danger({
+                    content: 'Valami hiba történt!',
+                    animation: 'fade'
+                });
             }
         });
         vm.editUser = function() {
             UserService.editUser(vm.user, userId, function(success){
                 if(success) {
+                    ngToast.danger({
+                        content: 'Sikeres szerkesztés!',
+                        animation: 'fade'
+                    });
                     $location.path('/user');
                 } else {
-                    console.log('USER EDIT FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen szerkesztés!',
+                        animation: 'fade'
+                    });
                 }
             });
         };
     }]);
     app.controller('ProjectListController', ['ProjectService', 'ngToast', function (ProjectService, ngToast) {
         var vm = this;
-        vm.searchField = '';
         vm.tableConfig = {
-            headers: ['Id', 'Név', 'Visszatartás', 'Megjegyzés', 'Műveletek'],
+            headers: [
+                { name: 'Id', prop: 'id'},
+                { name: 'Név', prop: 'name'},
+                { name: 'Visszatartás', prop: 'retention'},
+                { name: 'Megjegyzés', prop: 'note'},
+                { name: 'Műveletek', prop: null}],
+            sorting: {
+                type: 'name',
+                reverse: false,
+            },
             data: null
         };
         function loadList() {
@@ -675,13 +708,16 @@
                     });
                     loadList();
                 } else {
-                    console.log('DELETE FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen törlés!',
+                        animation: 'fade'
+                    });
                 }
             })
         };
         loadList();
     }]);
-    app.controller('ProjectCreateController', ['$location', 'ProjectService', function ($location, ProjectService) {
+    app.controller('ProjectCreateController', ['$location', 'ProjectService', 'ngToast', function ($location, ProjectService, ngToast) {
         var vm = this;
         vm.project = {
             name: '',
@@ -691,14 +727,21 @@
         vm.createProject = function () {
             ProjectService.createProject(vm.project, function(success) {
                 if(success) {
+                    ngToast.success({
+                        content: 'Sikeres mentés!',
+                        animation: 'fade'
+                    });
                     $location.path('/project');
                 } else {
-                    console.log('PROJECT CREATION FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen mentés!',
+                        animation: 'fade'
+                    });
                 }
             })
         };
     }]);
-    app.controller('ProjectEditController', ['$routeParams', '$location', 'ProjectService', function ($routeParams, $location, ProjectService) {
+    app.controller('ProjectEditController', ['$routeParams', '$location', 'ProjectService', 'ngToast', function ($routeParams, $location, ProjectService, ngToast) {
         var vm = this;
         var projectId = $routeParams.id;
         vm.project = {
@@ -714,24 +757,40 @@
                     note: data.note
                 }
             } else {
-                console.log('Project with id ' + projectId + ' not found!');
+                ngToast.danger({
+                    content: 'Valami hiba történt!',
+                    animation: 'fade'
+                });
             }
         });
         vm.editProject = function() {
             ProjectService.editProject(vm.project, projectId, function(success){
                 if(success) {
+                    ngToast.success({
+                        content: 'Sikeres szerkesztés!',
+                        animation: 'fade'
+                    });
                     $location.path('/project');
                 } else {
-                    console.log('PROJECT EDIT FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen Szerkesztés!',
+                        animation: 'fade'
+                    });
                 }
             });
         };
     }]);
     app.controller('StatusListController', ['StatusService', 'ngToast', function (StatusService, ngToast) {
         var vm = this;
-        vm.searchField = '';
         vm.tableConfig = {
-            headers: ['Id', 'Név', 'Műveletek'],
+            headers: [
+                { name: 'Id', prop: 'id'},
+                { name: 'Név', prop: 'name'},
+                { name: 'Műveletek', prop: null}],
+            sorting: {
+                type: 'name',
+                reverse: false,
+            },
             data: null
         };
         function loadList() {
@@ -757,7 +816,7 @@
         };
         loadList();
     }]);
-    app.controller('StatusCreateController', ['$location', 'StatusService', function ($location, StatusService) {
+    app.controller('StatusCreateController', ['$location', 'StatusService', 'ngToast', function ($location, StatusService, ngToast) {
         var vm = this;
         vm.status = {
             name: ''
@@ -765,9 +824,16 @@
         vm.createStatus = function () {
             StatusService.createStatus(vm.status, function(success) {
                 if(success) {
+                    ngToast.success({
+                        content: 'Sikeres mentés!',
+                        animation: 'fade'
+                    });
                     $location.path('/status');
                 } else {
-                    console.log('STATUS CREATION FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen mentés!',
+                        animation: 'fade'
+                    });
                 }
             })
         };
@@ -784,18 +850,23 @@
                     name: data.name
                 }
             } else {
-                console.log('Status with id ' + statusId + ' not found!');
+                ngToast.danger({
+                    content: 'Valami hiba történt!',
+                    animation: 'fade'
+                });
             }
         });
         vm.editStatus = function() {
             StatusService.editStatus(vm.status, statusId, function(success){
                 if(success) {
                     ngToast.success({
-                        content: 'Sikeres módosítás!'
+                        content: 'Sikeres szerkesztés!'
                     });
                     $location.path('/status');
                 } else {
-                    console.log('STATUS EDIT FAILED');
+                    ngToast.danger({
+                        content: 'Sikertelen szerkesztés!'
+                    });
                 }
             });
         };

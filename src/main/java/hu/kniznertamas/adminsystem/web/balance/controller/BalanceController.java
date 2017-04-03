@@ -1,6 +1,7 @@
 package hu.kniznertamas.adminsystem.web.balance.controller;
 
 import hu.kniznertamas.adminsystem.web.balance.domain.request.BalanceRequest;
+import hu.kniznertamas.adminsystem.web.balance.domain.request.DoPaymentRequest;
 import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 import hu.kniznertamas.adminsystem.web.balance.facade.BalanceViewFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class BalanceController {
     private static final String LIST_ALL_BALANCE_BY_DATE_MAPPING = "/api/balance/list/date/{date}";
     private static final String LIST_ALL_COMPLETED_BALANCE_MAPPING = "/api/balance/list/completed";
     private static final String LIST_ALL_UNCOMPLETED_BALANCE_MAPPING = "/api/balance/list/uncompleted";
+    private static final String DO_PAY_BALANCE_MAPPING = "/api/balance/pay";
 
     @Autowired
     private BalanceViewFacade balanceViewFacade;
@@ -69,6 +71,11 @@ public class BalanceController {
 
     @RequestMapping(value = LIST_ALL_UNCOMPLETED_BALANCE_MAPPING, method = RequestMethod.GET)
     public Set<BalanceView> findAllUncompletedBalance() {
+        return balanceViewFacade.findAllUncompletedBalance();
+    }
+
+    @RequestMapping(value = DO_PAY_BALANCE_MAPPING, method = RequestMethod.POST)
+    public Set<BalanceView> doPayment(@RequestBody DoPaymentRequest doPaymentRequest) {
         return balanceViewFacade.findAllUncompletedBalance();
     }
 
