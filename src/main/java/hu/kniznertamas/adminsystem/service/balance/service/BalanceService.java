@@ -1,9 +1,9 @@
 package hu.kniznertamas.adminsystem.service.balance.service;
 
+import hu.kniznertamas.adminsystem.dal.balance.dao.BalanceDao;
 import hu.kniznertamas.adminsystem.dal.balance.other.dao.OtherBalanceDao;
 import hu.kniznertamas.adminsystem.dal.balance.project.dao.ProjectBalanceDao;
 import hu.kniznertamas.adminsystem.dal.balance.user.dao.UserBalanceDao;
-import hu.kniznertamas.adminsystem.dal.dao.GenericDao;
 import hu.kniznertamas.adminsystem.service.balance.domain.Balance;
 import hu.kniznertamas.adminsystem.service.balance.type.BalanceType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +79,8 @@ public class BalanceService {
         return Stream.concat(Stream.concat(userBalances, projectBalances), otherBalances).collect(Collectors.toSet());
     }
 
-    private GenericDao<Balance> getDao(BalanceType balanceType) {
-        GenericDao<Balance> dao;
+    private BalanceDao getDao(BalanceType balanceType) {
+        BalanceDao dao;
         switch (balanceType) {
             case USER:
                 dao = userBalanceDao;
@@ -95,5 +95,9 @@ public class BalanceService {
                 dao = null;
         }
         return dao;
+    }
+
+    public void doPayment(Balance balance) {
+        getDao(balance.getBalanceType()).doPayment(balance);
     }
 }

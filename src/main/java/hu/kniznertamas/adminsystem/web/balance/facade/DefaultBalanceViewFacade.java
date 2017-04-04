@@ -4,6 +4,7 @@ import hu.kniznertamas.adminsystem.service.balance.domain.Balance;
 import hu.kniznertamas.adminsystem.service.balance.facade.BalanceServiceFacade;
 import hu.kniznertamas.adminsystem.service.balance.type.BalanceType;
 import hu.kniznertamas.adminsystem.web.balance.domain.request.BalanceRequest;
+import hu.kniznertamas.adminsystem.web.balance.domain.request.DoPaymentRequest;
 import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 import hu.kniznertamas.adminsystem.web.balance.transformer.BalanceViewTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +73,10 @@ public class DefaultBalanceViewFacade implements BalanceViewFacade {
     @Override
     public Set<BalanceView> findAllUncompletedBalance() {
         return balanceViewTransformer.transform(balanceServiceFacade.findAllUncompleted());
+    }
+
+    @Override
+    public void doPayment(DoPaymentRequest doPaymentRequest) {
+        balanceServiceFacade.doPayment(balanceViewTransformer.transform(doPaymentRequest));
     }
 }

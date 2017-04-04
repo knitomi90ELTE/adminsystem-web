@@ -63,4 +63,10 @@ public class DefaultUserBalanceDao implements UserBalanceDao {
     public Set<Balance> findAllByCompletedIsNotNull() {
         return userBalanceTransformer.transform(userBalanceRepository.findAllByCompletedIsNotNull());
     }
+
+    @Override
+    public void doPayment(Balance balance) {
+
+    }
+
 }

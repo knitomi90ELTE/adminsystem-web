@@ -63,4 +63,9 @@ public class DefaultOtherBalanceDao implements OtherBalanceDao {
     public Set<Balance> findAllByCompletedIsNotNull() {
         return otherBalanceTransformer.transform(otherBalanceRepository.findAllByCompletedIsNotNull());
     }
+
+    @Override
+    public void doPayment(Balance balance) {
+
+    }
 }

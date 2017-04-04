@@ -75,8 +75,8 @@ public class BalanceController {
     }
 
     @RequestMapping(value = DO_PAY_BALANCE_MAPPING, method = RequestMethod.POST)
-    public Set<BalanceView> doPayment(@RequestBody DoPaymentRequest doPaymentRequest) {
-        return balanceViewFacade.findAllUncompletedBalance();
+    public void doPayment(@RequestBody DoPaymentRequest doPaymentRequest) {
+        balanceViewFacade.doPayment(doPaymentRequest);
     }
 
 }

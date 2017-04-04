@@ -63,4 +63,9 @@ public class DefaultProjectBalanceDao implements ProjectBalanceDao {
     public Set<Balance> findAllByCompletedIsNotNull() {
         return projectBalanceTransformer.transform(projectBalanceRepository.findAllByCompletedIsNotNull());
     }
+
+    @Override
+    public void doPayment(Balance balance) {
+
+    }
 }

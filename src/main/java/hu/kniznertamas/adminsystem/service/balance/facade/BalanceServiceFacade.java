@@ -27,5 +27,5 @@ public interface BalanceServiceFacade {
 
     Set<Balance> findAllUncompleted();
 
-
+    void doPayment(Balance balance);
 }

@@ -1,6 +1,7 @@
 package hu.kniznertamas.adminsystem.web.balance.facade;
 
 import hu.kniznertamas.adminsystem.web.balance.domain.request.BalanceRequest;
+import hu.kniznertamas.adminsystem.web.balance.domain.request.DoPaymentRequest;
 import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 
 import java.util.Set;
@@ -28,4 +29,6 @@ public interface BalanceViewFacade {
     Set<BalanceView> findAllCompletedBalance();
 
     Set<BalanceView> findAllUncompletedBalance();
+
+    void doPayment(DoPaymentRequest doPaymentRequest);
 }

@@ -6,6 +6,7 @@ import hu.kniznertamas.adminsystem.service.project.domain.Project;
 import hu.kniznertamas.adminsystem.service.status.domain.Status;
 import hu.kniznertamas.adminsystem.service.user.domain.User;
 import hu.kniznertamas.adminsystem.web.balance.domain.request.BalanceRequest;
+import hu.kniznertamas.adminsystem.web.balance.domain.request.DoPaymentRequest;
 import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 import hu.kniznertamas.adminsystem.web.project.transformer.ProjectViewTransformer;
 import hu.kniznertamas.adminsystem.web.status.transformer.StatusViewTransformer;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * BalanceViewTransformer
  * Created by Tamas_Knizner on 2017-03-31.
  */
 @Component
@@ -104,6 +106,14 @@ public class BalanceViewTransformer {
 
     public Set<BalanceView> transform(Set<Balance> balances) {
         return balances.stream().map(this::transform).collect(Collectors.toSet());
+    }
+
+    public Balance transform(DoPaymentRequest doPaymentRequest) {
+        Balance balance = new Balance();
+        balance.setId(doPaymentRequest.getId());
+        balance.setCompleted(LocalDate.parse(doPaymentRequest.getCompletionDate()));
+        balance.setBalanceType(BalanceType.valueOf(doPaymentRequest.getBalanceType().toUpperCase()));
+        return balance;
     }
 
 }

@@ -61,4 +61,9 @@ public class DefaultBalanceServiceFacade implements BalanceServiceFacade {
     public Set<Balance> findAllUncompleted() {
         return balanceService.findAllUncompletedBalance();
     }
+
+    @Override
+    public void doPayment(Balance balance) {
+        balanceService.doPayment(balance);
+    }
 }
