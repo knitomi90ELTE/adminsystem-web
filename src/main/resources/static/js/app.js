@@ -445,7 +445,10 @@
                 console.log('Modal dismissed at: ' + new Date());
             });
         };
-        vm.openEditReport= function(report) {
+        vm.openNewBalance = function() {
+
+        };
+        vm.openEditReport = function(report) {
             var modal = $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
@@ -480,6 +483,9 @@
                 console.log('Modal dismissed at: ' + new Date());
             });
         };
+        vm.openEditBalance = function(balance) {
+
+        };
         vm.deleteTimeReport = function (reportId) {
             TimeReportService.deleteTimeReport(reportId, function(success){
                 if(success) {
@@ -487,7 +493,23 @@
                         content: 'Sikeres törlés!',
                         animation: 'fade'
                     });
-                    vm.loadData();
+                    loadTimeReportTable();
+                } else {
+                    ngToast.danger({
+                        content: 'Sikertelen törlés!',
+                        animation: 'fade'
+                    });
+                }
+            });
+        };
+        vm.deleteBalance = function(balance) {
+            BalanceService.deleteBalance(balance.id, balance.balanceType, function(success){
+                if(success) {
+                    ngToast.success({
+                        content: 'Sikeres törlés!',
+                        animation: 'fade'
+                    });
+                    loadBalanceTable();
                 } else {
                     ngToast.danger({
                         content: 'Sikertelen törlés!',
@@ -504,14 +526,22 @@
             headers: ['Nettó', 'Bruttó', 'Áfa', 'Áfa értéke', 'Dátum', 'Teljesítés', 'Jelleg', 'Kapcsolat', 'KP', 'Megjegyzés', 'Műveletek'],
             data: null
         };
-        vm.loadData = function () {
-            var formattedDate = vm.selectedDate.toISOString().substring(0, 10).replace(/-/g,'');
-            TimeReportService.getAllTimeReportsByDate(formattedDate, function(data) {
+        function getFormattedDate() {
+            return vm.selectedDate.toISOString().substring(0, 10).replace(/-/g,'');
+        }
+        function loadTimeReportTable() {
+            TimeReportService.getAllTimeReportsByDate(getFormattedDate(), function(data) {
                 vm.timeReportTableConfig.data = data;
             });
-            BalanceService.getAllCompletedBalancesByDate(formattedDate, function(data) {
+        }
+        function loadBalanceTable() {
+            BalanceService.getAllCompletedBalancesByDate(getFormattedDate(), function(data) {
                 vm.balanceTableConfig.data = data;
             });
+        }
+        vm.loadData = function () {
+            loadTimeReportTable();
+            loadBalanceTable();
         };
         $scope.$watch(function() {
             return vm.selectedDate;
