@@ -68,4 +68,5 @@ public class DefaultProjectBalanceDao implements ProjectBalanceDao {
     public void doPayment(Balance balance) {
 
     }
+
 }

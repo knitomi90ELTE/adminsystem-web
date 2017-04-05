@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 /**
+ * Default BalanceViewFacade implementation.
  * Created by Tamas_Knizner on 2017-03-31.
  */
 @Component
@@ -79,4 +80,5 @@ public class DefaultBalanceViewFacade implements BalanceViewFacade {
     public void doPayment(DoPaymentRequest doPaymentRequest) {
         balanceServiceFacade.doPayment(balanceViewTransformer.transform(doPaymentRequest));
     }
+
 }

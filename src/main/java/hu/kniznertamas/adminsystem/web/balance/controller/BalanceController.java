@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 /**
+ * Controller to handle balance related requests.
  * Created by Tamas_Knizner on 2017-03-31.
  */
 @RestController

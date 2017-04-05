@@ -7,6 +7,7 @@ import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 import java.util.Set;
 
 /**
+ * BalanceViewFacade
  * Created by Tamas_Knizner on 2017-03-31.
  */
 public interface BalanceViewFacade {
@@ -31,4 +32,5 @@ public interface BalanceViewFacade {
     Set<BalanceView> findAllUncompletedBalance();
 
     void doPayment(DoPaymentRequest doPaymentRequest);
+
 }

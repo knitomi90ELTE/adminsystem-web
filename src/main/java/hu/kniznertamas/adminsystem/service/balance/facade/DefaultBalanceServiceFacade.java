@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 /**
+ * Default BalanceServiceFacade implementation.
  * Created by Tamas_Knizner on 2017-03-23.
  */
 @Service
@@ -66,4 +67,5 @@ public class DefaultBalanceServiceFacade implements BalanceServiceFacade {
     public void doPayment(Balance balance) {
         balanceService.doPayment(balance);
     }
+
 }

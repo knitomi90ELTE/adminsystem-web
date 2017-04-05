@@ -66,7 +66,9 @@ public class DefaultUserBalanceDao implements UserBalanceDao {
 
     @Override
     public void doPayment(Balance balance) {
-
+        UserBalanceEntity userBalanceEntity = userBalanceRepository.findOne(balance.getId());
+        userBalanceEntity.setCompleted(balance.getCompleted());
+        userBalanceRepository.saveAndFlush(userBalanceEntity);
     }
 
 }

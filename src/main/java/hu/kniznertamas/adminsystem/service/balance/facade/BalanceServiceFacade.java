@@ -5,6 +5,7 @@ import hu.kniznertamas.adminsystem.service.balance.domain.Balance;
 import java.util.Set;
 
 /**
+ * BalanceServiceFacade
  * Created by Tamas_Knizner on 2017-03-23.
  */
 public interface BalanceServiceFacade {
@@ -28,4 +29,5 @@ public interface BalanceServiceFacade {
     Set<Balance> findAllUncompleted();
 
     void doPayment(Balance balance);
+
 }

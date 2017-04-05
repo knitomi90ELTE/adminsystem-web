@@ -119,6 +119,17 @@
                 }
             );
         };
+        BalanceService.getAllCompletedBalancesByDate = function(date, callback) {
+            var data = new ResourceDao(urlBase + 'list/date/' + date);
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
+                }
+            );
+        };
     }]);
     app.service('TimeReportService', ['ResourceDao', function(ResourceDao) {
         var TimeReportService = this;
@@ -392,7 +403,7 @@
     app.controller('NavigationController', function () {
 
     });
-    app.controller('TodayController',['$scope', 'TimeReportService', '$uibModal', 'ngToast', function ($scope, TimeReportService, $uibModal, ngToast) {
+    app.controller('TodayController',['$scope', 'TimeReportService','BalanceService', '$uibModal', 'ngToast', function ($scope, TimeReportService, BalanceService, $uibModal, ngToast) {
         var vm = this;
         vm.selectedDate = new Date();
         vm.datepicker = {
@@ -489,10 +500,17 @@
             headers: ['Id', 'Alkalmazott', 'Munka', 'Óraszám', 'Megjegyzés', 'Műveletek'],
             data: null
         };
+        vm.balanceTableConfig = {
+            headers: ['Nettó', 'Bruttó', 'Áfa', 'Áfa értéke', 'Dátum', 'Teljesítés', 'Jelleg', 'Kapcsolat', 'KP', 'Megjegyzés', 'Műveletek'],
+            data: null
+        };
         vm.loadData = function () {
             var formattedDate = vm.selectedDate.toISOString().substring(0, 10).replace(/-/g,'');
-            TimeReportService.getAllTimeReportsByDate(formattedDate, function(data){
+            TimeReportService.getAllTimeReportsByDate(formattedDate, function(data) {
                 vm.timeReportTableConfig.data = data;
+            });
+            BalanceService.getAllCompletedBalancesByDate(formattedDate, function(data) {
+                vm.balanceTableConfig.data = data;
             });
         };
         $scope.$watch(function() {

@@ -100,4 +100,5 @@ public class BalanceService {
     public void doPayment(Balance balance) {
         getDao(balance.getBalanceType()).doPayment(balance);
     }
+
 }
