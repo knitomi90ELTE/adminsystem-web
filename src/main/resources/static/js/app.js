@@ -403,7 +403,7 @@
     app.controller('NavigationController', function () {
 
     });
-    app.controller('TodayController',['$scope', 'TimeReportService','BalanceService', '$uibModal', 'ngToast', function ($scope, TimeReportService, BalanceService, $uibModal, ngToast) {
+    app.controller('TodayController',['$scope', 'TimeReportService', 'BalanceService', '$uibModal', 'ngToast', function ($scope, TimeReportService, BalanceService, $uibModal, ngToast) {
         var vm = this;
         vm.selectedDate = new Date();
         vm.datepicker = {
@@ -446,7 +446,33 @@
             });
         };
         vm.openNewBalance = function() {
-
+            var modal = $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'html/components/balance-modal.html',
+                controller: 'NewBalanceModalController',
+                controllerAs: 'ctrl',
+                size: 'lg',
+            });
+            modal.result.then(function (newBalance) {
+                BalanceService.createBalance(newBalance, function(success) {
+                    if(success) {
+                        ngToast.success({
+                            content: 'Sikeres mentés!',
+                            animation: 'fade'
+                        });
+                        vm.loadData();
+                    } else {
+                        ngToast.danger({
+                            content: 'Sikertelen mentés!',
+                            animation: 'fade'
+                        });
+                    }
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
         };
         vm.openEditReport = function(report) {
             var modal = $uibModal.open({
@@ -612,6 +638,62 @@
             $uibModalInstance.dismiss();
         };
     });
+    app.controller('NewBalanceModalController', ['$uibModalInstance', 'UserService', 'ProjectService', 'StatusService', function($uibModalInstance, UserService, ProjectService, StatusService){
+        var vm = this;
+        vm.title = 'Új hozzáadása';
+        vm.balanceTypes = [
+            { type: 'project', name: 'Munka' },
+            { type: 'user', name: 'Alkalmazott' },
+            { type: 'other', name: 'Egyéb' }
+        ];
+        vm.statuses = [];
+        vm.users = [];
+        vm.projects = [];
+        UserService.getAllUsers(function(data){
+            vm.users = data;
+        });
+        ProjectService.getAllProjects(function(data){
+            vm.projects = data;
+        });
+        StatusService.getAllStatuses(function(data){
+            vm.statuses = data;
+            vm.form = vm.statuses[0];
+        });
+        vm.form = {
+            net: 0,
+            gross: 0,
+            vat: 0,
+            vatValue: 0,
+            created: null,
+            completed: null,
+            status: null,
+            user: null,
+            project: null,
+            balanceType: vm.balanceTypes[0],
+            cash: true,
+            note: ''
+        };
+        vm.ok = function() {
+            var newBalance = {
+                net: vm.form.net,
+                gross: vm.form.gross,
+                vat: vm.form.vat,
+                vatValue: vm.form.vatValue,
+                created: vm.form.created,
+                completed: vm.form.completed,
+                status: vm.form.status.id,
+                balanceType: vm.form.balanceType.type,
+                userId: (vm.form.user !== null) ? vm.form.user.id : null,
+                projectId: (vm.form.project !== null) ? vm.form.project.id : null,
+                cash: vm.form.cash,
+                note: vm.form.note
+            };
+            $uibModalInstance.close(newBalance);
+        };
+        vm.cancel = function() {
+            $uibModalInstance.dismiss();
+        };
+    }]);
     app.controller('OpenItemsController', ['BalanceService', function(BalanceService) {
         var vm = this;
         vm.searchField = '';
