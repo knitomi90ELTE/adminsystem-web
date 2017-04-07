@@ -403,7 +403,7 @@
     app.controller('NavigationController', function () {
 
     });
-    app.controller('TodayController',['$scope', 'TimeReportService', 'BalanceService', '$uibModal', 'ngToast', function ($scope, TimeReportService, BalanceService, $uibModal, ngToast) {
+    app.controller('TodayController', ['$scope', 'TimeReportService', 'BalanceService', '$uibModal', 'ngToast', function ($scope, TimeReportService, BalanceService, $uibModal, ngToast) {
         var vm = this;
         vm.selectedDate = new Date();
         vm.datepicker = {
@@ -454,8 +454,17 @@
                 controller: 'NewBalanceModalController',
                 controllerAs: 'ctrl',
                 size: 'lg',
+                resolve: {
+                    currentDate: function () {
+                        return vm.selectedDate;
+                    }
+                }
             });
             modal.result.then(function (newBalance) {
+                newBalance.created = newBalance.created.toISOString().substring(0, 10);
+                if(newBalance.completed !== null) {
+                    newBalance.completed = newBalance.completed.toISOString().substring(0, 10);
+                }
                 BalanceService.createBalance(newBalance, function(success) {
                     if(success) {
                         ngToast.success({
@@ -576,7 +585,7 @@
         });
         vm.loadData();
     }]);
-    app.controller('NewReportModalController', ['$uibModalInstance', 'UserService', 'ProjectService', function($uibModalInstance, UserService, ProjectService){
+    app.controller('NewReportModalController', function($uibModalInstance, UserService, ProjectService){
         var vm = this;
         vm.title = 'Új hozzáadása';
         vm.users = [];
@@ -605,7 +614,7 @@
         vm.cancel = function() {
             $uibModalInstance.dismiss();
         };
-    }]);
+    });
     app.controller('EditReportModalController', function($uibModalInstance, UserService, ProjectService, report){
         var vm = this;
         vm.title = 'Szerkesztés';
@@ -638,9 +647,26 @@
             $uibModalInstance.dismiss();
         };
     });
-    app.controller('NewBalanceModalController', ['$uibModalInstance', 'UserService', 'ProjectService', 'StatusService', function($uibModalInstance, UserService, ProjectService, StatusService){
+    app.controller('NewBalanceModalController', function($uibModalInstance, UserService, ProjectService, StatusService, currentDate){
         var vm = this;
         vm.title = 'Új hozzáadása';
+        vm.datepicker = {
+            created: {
+                opened: false
+            },
+            completed: {
+                opened: false
+            },
+            options: {
+                startingDay: 1
+            }
+        };
+        vm.openCreatedPicker = function() {
+            vm.datepicker.created.opened = true;
+        };
+        vm.openCompletedPicker = function() {
+            vm.datepicker.completed.opened = true;
+        };
         vm.balanceTypes = [
             { type: 'project', name: 'Munka' },
             { type: 'user', name: 'Alkalmazott' },
@@ -657,14 +683,14 @@
         });
         StatusService.getAllStatuses(function(data){
             vm.statuses = data;
-            vm.form = vm.statuses[0];
+            vm.form.status = vm.statuses[0];
         });
         vm.form = {
             net: 0,
             gross: 0,
             vat: 0,
             vatValue: 0,
-            created: null,
+            created: currentDate,
             completed: null,
             status: null,
             user: null,
@@ -681,7 +707,7 @@
                 vatValue: vm.form.vatValue,
                 created: vm.form.created,
                 completed: vm.form.completed,
-                status: vm.form.status.id,
+                statusId: vm.form.status.id,
                 balanceType: vm.form.balanceType.type,
                 userId: (vm.form.user !== null) ? vm.form.user.id : null,
                 projectId: (vm.form.project !== null) ? vm.form.project.id : null,
@@ -693,7 +719,7 @@
         vm.cancel = function() {
             $uibModalInstance.dismiss();
         };
-    }]);
+    });
     app.controller('OpenItemsController', ['BalanceService', function(BalanceService) {
         var vm = this;
         vm.searchField = '';

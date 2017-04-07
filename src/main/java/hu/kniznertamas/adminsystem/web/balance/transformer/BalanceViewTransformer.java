@@ -11,6 +11,8 @@ import hu.kniznertamas.adminsystem.web.balance.domain.response.BalanceView;
 import hu.kniznertamas.adminsystem.web.project.transformer.ProjectViewTransformer;
 import hu.kniznertamas.adminsystem.web.status.transformer.StatusViewTransformer;
 import hu.kniznertamas.adminsystem.web.user.transformer.UserViewTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -67,7 +69,7 @@ public class BalanceViewTransformer {
         balance.setStatus(balanceStatus);
         balance.setCash(balanceRequest.getCash());
         balance.setNote(balanceRequest.getNote());
-        if(!"".equals(balanceRequest.getCompleted())) {
+        if(balanceRequest.getCompleted() != null) {
             balance.setCompleted(LocalDate.parse(balanceRequest.getCompleted()));
         }
         return balance;

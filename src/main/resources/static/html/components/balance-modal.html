@@ -1,69 +1,93 @@
 <div class="modal-header">
-    <h3 class="modal-title" id="modal-title">ctrl.title</h3>
+    <h3 class="modal-title" id="modal-title" ng-bind-html="ctrl.title"></h3>
 </div>
 <div class="modal-body" id="modal-body">
     <form name="balanceForm">
-        <div class="form-group">
-            <label for="net">Nettó</label>
-            <input type="number" id="net" class="form-control" step="any" ng-model="ctrl.form.net">
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label for="net">Nettó</label>
+                <input type="number" id="net" class="form-control" step="any" ng-model="ctrl.form.net">
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="gross">Bruttó</label>
+                <input type="number" id="gross" class="form-control" step="any" ng-model="ctrl.form.gross">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="gross">Bruttó</label>
-            <input type="number" id="gross" class="form-control" step="any" ng-model="ctrl.form.gross">
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label for="vat">ÁFA</label>
+                <input type="number" id="vat" class="form-control" step="any" ng-model="ctrl.form.vat">
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="vat-value">ÁFA értéke</label>
+                <input type="number" id="vat-value" class="form-control" step="any" ng-model="ctrl.form.vatValue">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="vat">ÁFA</label>
-            <input type="number" id="vat" class="form-control" step="any" ng-model="ctrl.form.vat">
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label>Dátum</label>
+                <div class="input-group">
+                    <input type="text" id="created" class="form-control" uib-datepicker-popup="yyyy-MM-dd" datepicker-options="ctrl.datepicker.options"
+                           ng-model="ctrl.form.created" is-open="ctrl.datepicker.created.opened" popup-placement="bottom"
+                           close-text="Bezárás" clear-text="Törlés" current-text="Ma"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="ctrl.openCreatedPicker()"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>Teljesítés</label>
+                <div class="input-group">
+                    <input type="text" id="completed" class="form-control" uib-datepicker-popup="yyyy-MM-dd" datepicker-options="ctrl.datepicker.options"
+                           ng-model="ctrl.form.completed" is-open="ctrl.datepicker.completed.opened" popup-placement="bottom"
+                           close-text="Bezárás" clear-text="Törlés" current-text="Ma"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="ctrl.openCompletedPicker()"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="vat-value">ÁFA értéke</label>
-            <input type="number" id="vat-value" class="form-control" step="any" ng-model="ctrl.form.vatValue">
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label>Típus</label>
+                <ui-select id="balanceType" theme="bootstrap" ng-model="ctrl.form.balanceType">
+                    <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="balanceType in ctrl.balanceTypes | filter: $select.search">{{balanceType.name}}</ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="form-group col-xs-6" ng-if="ctrl.form.balanceType.type === 'user'">
+                <label>Alkalmazott</label>
+                <ui-select id="selectedUser" theme="bootstrap" ng-model="ctrl.form.user">
+                    <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="user in ctrl.users | filter: $select.search">{{user.name}}</ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="form-group col-xs-6" ng-if="ctrl.form.balanceType.type === 'project'">
+                <label>Munka</label>
+                <ui-select id="selectedProject" theme="bootstrap" ng-model="ctrl.form.project">
+                    <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="project in ctrl.projects | filter: $select.search">{{project.name}}</ui-select-choices>
+                </ui-select>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="created">Dátum</label>
-            <input type="text" id="created" class="form-control" ng-model="ctrl.form.created">
-        </div>
-        <div class="form-group">
-            <label for="completed">Teljesítés</label>
-            <input type="text" id="completed" class="form-control" ng-model="ctrl.form.completed">
-        </div>
-        <div class="form-group">
-            <label>Típus</label>
-            <ui-select id="balanceType" theme="bootstrap" ng-model="ctrl.form.balanceType">
-                <ui-select-match>{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="balanceType in ctrl.balanceTypes | filter: $select.search">{{balanceType.name}}</ui-select-choices>
-            </ui-select>
-        </div>
-        <div class="form-group" ng-if="ctrl.form.balanceType.type === 'user'">
-            <label>Alkalmazott</label>
-            <ui-select id="selectedUser" theme="bootstrap" ng-model="ctrl.form.user">
-                <ui-select-match>{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="user in ctrl.users | filter: $select.search">{{user.name}}</ui-select-choices>
-            </ui-select>
-        </div>
-        <div class="form-group" ng-if="ctrl.form.balanceType.type === 'project'">
-            <label>Munka</label>
-            <ui-select id="selectedProject" theme="bootstrap" ng-model="ctrl.form.project">
-                <ui-select-match>{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="project in ctrl.projects | filter: $select.search">{{project.name}}</ui-select-choices>
-            </ui-select>
-        </div>
-        <div class="form-group">
-            <label>Megnevezés</label>
-            <ui-select id="selectedStatus" theme="bootstrap" ng-model="ctrl.form.status">
-                <ui-select-match>{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="status in ctrl.statuses | filter: $select.search">{{status.name}}</ui-select-choices>
-            </ui-select>
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label>Megnevezés</label>
+                <ui-select id="selectedStatus" theme="bootstrap" ng-model="ctrl.form.status">
+                    <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="status in ctrl.statuses | filter: $select.search">{{status.name}}</ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="note">Megjegyzés</label>
+                <input type="text" id="note" class="form-control" placeholder="Megjegyzés" ng-model="ctrl.form.note">
+            </div>
         </div>
         <div class="checkbox">
             <label for="cash">
                 <input type="checkbox" id="cash" ng-model="ctrl.form.cash">
                 Készpénzes
             </label>
-        </div>
-        <div class="form-group">
-            <label for="note">Megjegyzés</label>
-            <input type="text" id="note" class="form-control" placeholder="Megjegyzés" ng-model="ctrl.form.note">
         </div>
     </form>
 </div>

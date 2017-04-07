@@ -113,4 +113,5 @@ public class BalanceRequest {
     public void setNote(String note) {
         this.note = note;
     }
+
 }
