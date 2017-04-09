@@ -4,8 +4,8 @@ import hu.kniznertamas.adminsystem.dal.project.entity.ProjectEntity;
 import hu.kniznertamas.adminsystem.service.project.domain.Project;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,7 @@ public class ProjectTransformer {
         return project;
     }
 
-    public Set<Project> transform(List<ProjectEntity> projectEntities) {
+    public Set<Project> transform(Collection<ProjectEntity> projectEntities) {
         Set<Project> result;
         if(projectEntities.isEmpty()) {
             result = Collections.emptySet();

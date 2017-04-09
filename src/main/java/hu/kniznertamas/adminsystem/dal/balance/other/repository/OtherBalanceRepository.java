@@ -11,6 +11,8 @@ import java.util.Set;
  */
 public interface OtherBalanceRepository extends JpaRepository<OtherBalanceEntity, Long> {
 
+
+
     Set<OtherBalanceEntity> findAllByCompleted(LocalDate completed);
 
     Set<OtherBalanceEntity> findAllByCompletedIsNull();

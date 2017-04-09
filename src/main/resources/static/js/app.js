@@ -403,7 +403,7 @@
     app.controller('NavigationController', function () {
 
     });
-    app.controller('TodayController', ['$scope', 'TimeReportService', 'BalanceService', '$uibModal', 'ngToast', function ($scope, TimeReportService, BalanceService, $uibModal, ngToast) {
+    app.controller('TodayController', ['$scope', '$filter', 'TimeReportService', 'BalanceService', '$uibModal', 'ngToast', function ($scope, $filter, TimeReportService, BalanceService, $uibModal, ngToast) {
         var vm = this;
         vm.selectedDate = new Date();
         vm.datepicker = {
@@ -426,7 +426,7 @@
                 size: 'lg',
             });
             modal.result.then(function (newReport) {
-                newReport.created = vm.selectedDate.toISOString().substring(0, 10);
+                newReport.created = $filter('date')(vm.selectedDate, 'yyyy-MM-dd');
                 TimeReportService.createTimeReport(newReport, function(success) {
                     if(success) {
                         ngToast.success({
@@ -461,10 +461,6 @@
                 }
             });
             modal.result.then(function (newBalance) {
-                newBalance.created = newBalance.created.toISOString().substring(0, 10);
-                if(newBalance.completed !== null) {
-                    newBalance.completed = newBalance.completed.toISOString().substring(0, 10);
-                }
                 BalanceService.createBalance(newBalance, function(success) {
                     if(success) {
                         ngToast.success({
@@ -499,7 +495,7 @@
                 }
             });
             modal.result.then(function (editedReport) {
-                editedReport.created = vm.selectedDate.toISOString().substring(0, 10);
+                editedReport.created = $filter('date')(editedReport.created, 'yyyy-MM-dd');
                 TimeReportService.editTimeReport(editedReport, editedReport.id, function(success) {
                     if(success) {
                         ngToast.success({
@@ -519,7 +515,38 @@
             });
         };
         vm.openEditBalance = function(balance) {
-
+            var modal = $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'html/components/balance-modal.html',
+                controller: 'EditBalanceModalController',
+                controllerAs: 'ctrl',
+                size: 'lg',
+                resolve: {
+                    balance: function () {
+                        return balance;
+                    }
+                }
+            });
+            modal.result.then(function (editedBalance) {
+                BalanceService.editBalance(editedBalance, editedBalance.id, function(success) {
+                    if(success) {
+                        ngToast.success({
+                            content: 'Sikeres mentés!',
+                            animation: 'fade'
+                        });
+                        vm.loadData();
+                    } else {
+                        ngToast.danger({
+                            content: 'Sikertelen mentés!',
+                            animation: 'fade'
+                        });
+                    }
+                })
+            }, function () {
+                console.log('Modal dismissed at: ' + new Date());
+            });
         };
         vm.deleteTimeReport = function (reportId) {
             TimeReportService.deleteTimeReport(reportId, function(success){
@@ -640,6 +667,7 @@
                 projectId: vm.form.project.id,
                 hour: vm.form.hour,
                 note: vm.form.note,
+                created: report.created
             };
             $uibModalInstance.close(editedReport);
         };
@@ -647,7 +675,7 @@
             $uibModalInstance.dismiss();
         };
     });
-    app.controller('NewBalanceModalController', function($uibModalInstance, UserService, ProjectService, StatusService, currentDate){
+    app.controller('NewBalanceModalController', function($scope, $filter, $uibModalInstance, UserService, ProjectService, StatusService, currentDate){
         var vm = this;
         vm.title = 'Új hozzáadása';
         vm.datepicker = {
@@ -685,9 +713,12 @@
             vm.statuses = data;
             vm.form.status = vm.statuses[0];
         });
+        function buildDate(date) {
+            return $filter('date')(date, 'yyyy-MM-dd');
+        }
         vm.form = {
-            net: 0,
-            gross: 0,
+            net: null,
+            gross: null,
             vat: 0,
             vatValue: 0,
             created: currentDate,
@@ -699,13 +730,34 @@
             cash: true,
             note: ''
         };
+
+        $scope.$watch(function() {
+            return vm.form.net;
+        }, function () {
+            if($('#gross').is(":focus") || vm.form.net === null) {
+                return;
+            }
+            vm.form.gross = parseInt(vm.form.net * (1 + (vm.form.vat / 100)), 10);
+            vm.form.vatValue = parseInt(vm.form.gross - vm.form.net, 10);
+        });
+
+        $scope.$watch(function() {
+            return vm.form.gross;
+        }, function () {
+            if($('#net').is(":focus") || vm.form.gross === null) {
+                return;
+            }
+            vm.form.net = parseInt(vm.form.gross / (1 + (vm.form.vat / 100)), 10);
+            vm.form.vatValue = parseInt(vm.form.gross - vm.form.net, 10);
+        });
+
         vm.ok = function() {
             var newBalance = {
                 net: vm.form.net,
                 gross: vm.form.gross,
                 vat: vm.form.vat,
                 vatValue: vm.form.vatValue,
-                created: vm.form.created,
+                created: buildDate(vm.form.created),
                 completed: vm.form.completed,
                 statusId: vm.form.status.id,
                 balanceType: vm.form.balanceType.type,
@@ -714,7 +766,114 @@
                 cash: vm.form.cash,
                 note: vm.form.note
             };
+            if(newBalance.completed !== null) {
+                newBalance.completed = buildDate(newBalance.completed);
+            }
             $uibModalInstance.close(newBalance);
+        };
+        vm.cancel = function() {
+            $uibModalInstance.dismiss();
+        };
+    });
+    app.controller('EditBalanceModalController', function ($scope, $filter, $uibModalInstance, UserService, ProjectService, StatusService, balance) {
+        var vm = this;
+        vm.title = 'Szerkesztés';
+        vm.datepicker = {
+            created: {
+                opened: false
+            },
+            completed: {
+                opened: false
+            },
+            options: {
+                startingDay: 1
+            }
+        };
+        vm.openCreatedPicker = function() {
+            vm.datepicker.created.opened = true;
+        };
+        vm.openCompletedPicker = function() {
+            vm.datepicker.completed.opened = true;
+        };
+        vm.balanceTypes = [
+            { type: 'project', name: 'Munka' },
+            { type: 'user', name: 'Alkalmazott' },
+            { type: 'other', name: 'Egyéb' }
+        ];
+        vm.statuses = [];
+        vm.users = [];
+        vm.projects = [];
+        vm.form = {};
+        UserService.getAllUsers(function(userData){
+            vm.users = userData;
+            ProjectService.getAllProjects(function(projectData){
+                vm.projects = projectData;
+                StatusService.getAllStatuses(function(statusData){
+                    vm.statuses = statusData;
+                    vm.form.status = vm.statuses[0];
+                    setupFormData();
+                });
+            });
+        });
+        function setupFormData() {
+            vm.form = {
+                net: balance.net,
+                gross: balance.gross,
+                vat: balance.vat,
+                vatValue: balance.vatValue,
+                created: new Date(balance.created),
+                completed: new Date(balance.completed),
+                status: balance.status,
+                user: balance.user,
+                project: balance.project,
+                balanceType: $filter('filter')(vm.balanceTypes, {type: balance.balanceType})[0],
+                cash: balance.cash,
+                note: balance.note
+            };
+        }
+        function buildDate(date) {
+            return $filter('date')(date, 'yyyy-MM-dd');
+        }
+        $scope.$watch(function() {
+            return vm.form.net;
+        }, function () {
+            if($('#gross').is(":focus") || vm.form.net === null) {
+                return;
+            }
+            vm.form.gross = parseInt(vm.form.net * (1 + (vm.form.vat / 100)), 10);
+            vm.form.vatValue = parseInt(vm.form.gross - vm.form.net, 10);
+        });
+
+        $scope.$watch(function() {
+            return vm.form.gross;
+        }, function () {
+            if($('#net').is(":focus") || vm.form.gross === null) {
+                return;
+            }
+            vm.form.net = parseInt(vm.form.gross / (1 + (vm.form.vat / 100)), 10);
+            vm.form.vatValue = parseInt(vm.form.gross - vm.form.net, 10);
+        });
+
+        vm.ok = function() {
+            var editedBalance = {
+                id: balance.id,
+                net: vm.form.net,
+                gross: vm.form.gross,
+                vat: vm.form.vat,
+                vatValue: vm.form.vatValue,
+                created: buildDate(vm.form.created),
+                completed: buildDate(vm.form.completed),
+                statusId: vm.form.status.id,
+                balanceType: vm.form.balanceType.type,
+                userId: (vm.form.user !== null) ? vm.form.user.id : null,
+                projectId: (vm.form.project !== null) ? vm.form.project.id : null,
+                cash: vm.form.cash,
+                note: vm.form.note
+            };
+            if(editedBalance.completed !== null) {
+                editedBalance.completed = buildDate(editedBalance.completed);
+            }
+            $uibModalInstance.close(editedBalance);
         };
         vm.cancel = function() {
             $uibModalInstance.dismiss();
