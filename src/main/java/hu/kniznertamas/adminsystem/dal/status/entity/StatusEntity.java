@@ -16,6 +16,9 @@ public class StatusEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "is_income")
+    private Boolean isIncome;
+
     public Long getId() {
         return id;
     }
@@ -30,5 +33,13 @@ public class StatusEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getIsIncome() {
+        return isIncome;
+    }
+
+    public void setIsIncome(Boolean isIncome) {
+        this.isIncome = isIncome;
     }
 }

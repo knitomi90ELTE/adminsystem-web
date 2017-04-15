@@ -130,6 +130,17 @@
                 }
             );
         };
+        BalanceService.doPayment = function (params, callback) {
+            var data = new ResourceDao(urlBase + 'pay');
+            data.post(params).then(
+                function(success) {
+                    callback(true);
+                },
+                function(error){
+                    callback(false);
+                }
+            );
+        };
     }]);
     app.service('TimeReportService', ['ResourceDao', function(ResourceDao) {
         var TimeReportService = this;
@@ -415,6 +426,14 @@
         vm.openDatePicker = function() {
             vm.datepicker.opened = true;
         };
+        vm.nextDay = function () {
+            var nextDay = new Date(vm.selectedDate.getFullYear(), vm.selectedDate.getMonth(), vm.selectedDate.getDate() + 1);
+            vm.selectedDate = nextDay;
+        };
+        vm.previousDay = function () {
+            var previousDay = new Date(vm.selectedDate.getFullYear(), vm.selectedDate.getMonth(), vm.selectedDate.getDate() - 1);
+            vm.selectedDate = previousDay;
+        };
         vm.openNewReport = function() {
             var modal = $uibModal.open({
                 animation: true,
@@ -589,7 +608,7 @@
             data: null
         };
         function getFormattedDate() {
-            return vm.selectedDate.toISOString().substring(0, 10).replace(/-/g,'');
+            return $filter('date')(vm.selectedDate, 'yyyyMMdd') + '';
         }
         function loadTimeReportTable() {
             TimeReportService.getAllTimeReportsByDate(getFormattedDate(), function(data) {
@@ -608,7 +627,9 @@
         $scope.$watch(function() {
             return vm.selectedDate;
         }, function(current, original) {
-            vm.loadData();
+            if(current !== original) {
+                vm.loadData();
+            }
         });
         vm.loadData();
     }]);
@@ -883,9 +904,34 @@
         var vm = this;
         vm.searchField = '';
         vm.tableConfig = {
-            headers: ['Id', 'Nettó', 'Bruttó', 'Áfa', 'Áfa értéke', 'Dátum', 'Teljesítés', 'Jelleg', 'Kapcsolat', 'Készpénzes', 'Megjegyzés', 'Műveletek'],
+            headers: [
+                { name: 'Id', prop: 'id'},
+                { name: 'Nettó', prop: 'net'},
+                { name: 'Bruttó', prop: 'gross'},
+                { name: 'Áfa', prop: 'vat'},
+                { name: 'Áfa értéke', prop: 'vatValue'},
+                { name: 'Dátum', prop: 'created'},
+                { name: 'Teljesítés', prop: 'completed'},
+                { name: 'Jelleg', prop: null},
+                { name: 'Kapcsolat', prop: null},
+                { name: 'Készpénzes', prop: 'cash'},
+                { name: 'Megjegyzés', prop: 'note'},
+                { name: 'Műveletek', prop: null}],
+            sorting: {
+                type: 'id',
+                reverse: false,
+            },
             data: null
         };
+
+        vm.doPayment = function(balance) {
+            var params = {
+                id: balance.id,
+                balanceType: balance.balanceType,
+                completionDate: $filter('date')(new Date(), 'yyyy-MM-dd')
+            }
+        };
+
         function loadList() {
             BalanceService.getAllBalances(function(data){
                 vm.tableConfig.data = data;
@@ -1101,6 +1147,7 @@
             headers: [
                 { name: 'Id', prop: 'id'},
                 { name: 'Név', prop: 'name'},
+                { name: 'Bevétel', prop: 'isIncome'},
                 { name: 'Műveletek', prop: null}],
             sorting: {
                 type: 'name',
@@ -1134,7 +1181,8 @@
     app.controller('StatusCreateController', ['$location', 'StatusService', 'ngToast', function ($location, StatusService, ngToast) {
         var vm = this;
         vm.status = {
-            name: ''
+            name: '',
+            isIncome: false
         };
         vm.createStatus = function () {
             StatusService.createStatus(vm.status, function(success) {
@@ -1157,12 +1205,14 @@
         var vm = this;
         var statusId = $routeParams.id;
         vm.status = {
-            name: ''
+            name: '',
+            isIncome: false
         };
         StatusService.getStatusById(statusId, function(data){
             if(data) {
                 vm.status = {
-                    name: data.name
+                    name: data.name,
+                    isIncome: data.isIncome
                 }
             } else {
                 ngToast.danger({

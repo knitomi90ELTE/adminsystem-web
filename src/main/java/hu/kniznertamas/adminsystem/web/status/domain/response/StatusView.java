@@ -7,6 +7,7 @@ public class StatusView {
 
     private Long id;
     private String name;
+    private Boolean isIncome;
 
     public Long getId() {
         return id;
@@ -22,5 +23,13 @@ public class StatusView {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getIsIncome() {
+        return isIncome;
+    }
+
+    public void setIsIncome(Boolean isIncome) {
+        this.isIncome = isIncome;
     }
 }

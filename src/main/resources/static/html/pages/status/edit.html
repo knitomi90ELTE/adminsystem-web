@@ -5,6 +5,12 @@
       <label for="statusName">Név</label>
       <input type="text" class="form-control" id="statusName" placeholder="Név" ng-model="ctrl.status.name">
     </div>
+    <div class="checkbox">
+      <label for="statusIsIncome">
+        <input type="checkbox" id="statusIsIncome" ng-model="ctrl.status.isIncome">
+        Bevétel
+      </label>
+    </div>
     <button type="button" class="btn btn-success" ng-click="ctrl.editStatus()">Mentés</button>
   </form>
 </div>

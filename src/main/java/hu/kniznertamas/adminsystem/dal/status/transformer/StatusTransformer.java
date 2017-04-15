@@ -19,6 +19,7 @@ public class StatusTransformer {
         StatusEntity statusEntity = new StatusEntity();
         statusEntity.setId(status.getId());
         statusEntity.setName(status.getName());
+        statusEntity.setIsIncome(status.getIsIncome());
         return statusEntity;
     }
 
@@ -26,6 +27,7 @@ public class StatusTransformer {
         Status status = new Status();
         status.setId(statusEntity.getId());
         status.setName(statusEntity.getName());
+        status.setIsIncome(statusEntity.getIsIncome());
         return status;
     }
 

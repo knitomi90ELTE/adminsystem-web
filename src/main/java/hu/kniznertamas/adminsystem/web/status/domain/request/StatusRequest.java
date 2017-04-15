@@ -6,6 +6,7 @@ package hu.kniznertamas.adminsystem.web.status.domain.request;
 public class StatusRequest {
 
     private String name;
+    private Boolean isIncome;
 
     public String getName() {
         return name;
@@ -13,5 +14,13 @@ public class StatusRequest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getIsIncome() {
+        return isIncome;
+    }
+
+    public void setIsIncome(Boolean isIncome) {
+        this.isIncome = isIncome;
     }
 }

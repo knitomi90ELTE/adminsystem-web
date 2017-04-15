@@ -1,5 +1,5 @@
 <div ng-controller="OpenItemsController as ctrl" class="container-fluid">
-  <h1>Munkák</h1>
+  <h1>Nyitott tételek</h1>
   <div class="row">
     <div class="col-lg-6">
       <div class="input-group">
@@ -16,11 +16,18 @@
   <table class="table table-hover">
     <thead>
     <tr>
-      <th ng-repeat="header in ctrl.tableConfig.headers">{{header}}</th>
+      <th ng-repeat="header in ctrl.tableConfig.headers">
+        <a ng-if="header.prop !== null" ng-click="ctrl.tableConfig.sorting.type = header.prop; ctrl.tableConfig.sorting.reverse = !ctrl.tableConfig.sorting.reverse">
+          {{header.name}}
+          <span ng-if="ctrl.tableConfig.sorting.type === header.prop && !ctrl.tableConfig.sorting.reverse" class="glyphicon glyphicon-chevron-down"></span>
+          <span ng-if="ctrl.tableConfig.sorting.type === header.prop && ctrl.tableConfig.sorting.reverse" class="glyphicon glyphicon-chevron-up"></span>
+        </a>
+        <span ng-if="header.prop === null">{{header.name}}</span>
+      </th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="balance in ctrl.tableConfig.data | filter:search">
+    <tr ng-class="{'income-row': balance.status.isIncome}" ng-repeat="balance in ctrl.tableConfig.data | orderBy:ctrl.tableConfig.sorting.type:ctrl.tableConfig.sorting.reverse | filter:search">
       <td>{{balance.id}}</td>
       <td>{{balance.net}}</td>
       <td>{{balance.gross}}</td>

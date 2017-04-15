@@ -17,6 +17,7 @@ public class StatusViewTransformer {
     public Status transform(StatusRequest statusRequest) {
         Status status = new Status();
         status.setName(statusRequest.getName());
+        status.setIsIncome(statusRequest.getIsIncome());
         return status;
     }
 
@@ -30,6 +31,7 @@ public class StatusViewTransformer {
         StatusView statusView = new StatusView();
         statusView.setId(status.getId());
         statusView.setName(status.getName());
+        statusView.setIsIncome(status.getIsIncome());
         return statusView;
     }
 
