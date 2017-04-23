@@ -68,4 +68,14 @@ public class DefaultBalanceServiceFacade implements BalanceServiceFacade {
         balanceService.doPayment(balance);
     }
 
+    @Override
+    public Set<Balance> listBalanceByUserId(Long userId) {
+        return balanceService.listBalanceByUserId(userId);
+    }
+
+    @Override
+    public Set<Balance> listBalanceByProjectId(Long projectId) {
+        return balanceService.listBalanceByProjectId(projectId);
+    }
+
 }

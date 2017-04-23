@@ -81,4 +81,14 @@ public class DefaultBalanceViewFacade implements BalanceViewFacade {
         balanceServiceFacade.doPayment(balanceViewTransformer.transform(doPaymentRequest));
     }
 
+    @Override
+    public Set<BalanceView> listBalanceByUserId(Long userId) {
+        return balanceViewTransformer.transform(balanceServiceFacade.listBalanceByUserId(userId));
+    }
+
+    @Override
+    public Set<BalanceView> listBalanceByProjectId(Long projectId) {
+        return balanceViewTransformer.transform(balanceServiceFacade.listBalanceByProjectId(projectId));
+    }
+
 }

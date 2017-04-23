@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 /**
  * Created by Tamas_Knizner on 2017-03-23.
+ * Service to retrieve balance objects.
  */
 @Service
 public class BalanceService {
@@ -101,4 +102,11 @@ public class BalanceService {
         getDao(balance.getBalanceType()).doPayment(balance);
     }
 
+    public Set<Balance> listBalanceByUserId(Long userId) {
+        return userBalanceDao.findAllByUserId(userId);
+    }
+
+    public Set<Balance> listBalanceByProjectId(Long projectId) {
+        return projectBalanceDao.findAll().stream().filter(balance -> projectId.equals(balance.getProject().getId())).collect(Collectors.toSet());
+    }
 }

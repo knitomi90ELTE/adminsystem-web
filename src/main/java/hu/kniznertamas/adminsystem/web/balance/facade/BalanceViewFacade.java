@@ -33,4 +33,7 @@ public interface BalanceViewFacade {
 
     void doPayment(DoPaymentRequest doPaymentRequest);
 
+    Set<BalanceView> listBalanceByUserId(Long userId);
+
+    Set<BalanceView> listBalanceByProjectId(Long projectId);
 }

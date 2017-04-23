@@ -66,6 +66,8 @@ public class DefaultOtherBalanceDao implements OtherBalanceDao {
 
     @Override
     public void doPayment(Balance balance) {
-
+        OtherBalanceEntity otherBalanceEntity = otherBalanceRepository.findOne(balance.getId());
+        otherBalanceEntity.setCompleted(balance.getCompleted());
+        otherBalanceRepository.saveAndFlush(otherBalanceEntity);
     }
 }

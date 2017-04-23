@@ -26,6 +26,8 @@ public class BalanceController {
     private static final String LIST_ALL_COMPLETED_BALANCE_MAPPING = "/api/balance/list/completed";
     private static final String LIST_ALL_UNCOMPLETED_BALANCE_MAPPING = "/api/balance/list/uncompleted";
     private static final String DO_PAY_BALANCE_MAPPING = "/api/balance/pay";
+    private static final String LIST_BALANCE_BY_USER_ID_MAPPING = "/api/balance/list/user/{userId}";
+    private static final String LIST_BALANCE_BY_PROJECT_ID_MAPPING = "/api/balance/list/project/{projectId}";
 
     @Autowired
     private BalanceViewFacade balanceViewFacade;
@@ -78,6 +80,16 @@ public class BalanceController {
     @RequestMapping(value = DO_PAY_BALANCE_MAPPING, method = RequestMethod.POST)
     public void doPayment(@RequestBody DoPaymentRequest doPaymentRequest) {
         balanceViewFacade.doPayment(doPaymentRequest);
+    }
+
+    @RequestMapping(value = LIST_BALANCE_BY_USER_ID_MAPPING, method = RequestMethod.GET)
+    public Set<BalanceView> listBalanceByUserId(@PathVariable Long userId) {
+        return balanceViewFacade.listBalanceByUserId(userId);
+    }
+
+    @RequestMapping(value = LIST_BALANCE_BY_PROJECT_ID_MAPPING, method = RequestMethod.GET)
+    public Set<BalanceView> listBalanceByProjectId(@PathVariable Long projectId) {
+        return balanceViewFacade.listBalanceByProjectId(projectId);
     }
 
 }

@@ -17,4 +17,6 @@ public interface ProjectBalanceRepository extends JpaRepository<ProjectBalanceEn
 
     Set<ProjectBalanceEntity> findAllByCompletedIsNotNull();
 
+    Set<ProjectBalanceEntity> findAllByProjectEntity_IdAndCompletedIsNotNull(Long projectEntityId);
+
 }

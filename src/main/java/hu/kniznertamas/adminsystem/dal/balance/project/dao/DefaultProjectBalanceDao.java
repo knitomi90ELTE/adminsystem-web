@@ -66,7 +66,13 @@ public class DefaultProjectBalanceDao implements ProjectBalanceDao {
 
     @Override
     public void doPayment(Balance balance) {
-
+        ProjectBalanceEntity projectBalanceEntity = projectBalanceRepository.findOne(balance.getId());
+        projectBalanceEntity.setCompleted(balance.getCompleted());
+        projectBalanceRepository.saveAndFlush(projectBalanceEntity);
     }
 
+    @Override
+    public Set<Balance> findAllByProjectId(Long projectId) {
+        return projectBalanceTransformer.transform(projectBalanceRepository.findAllByProjectEntity_IdAndCompletedIsNotNull(projectId));
+    }
 }

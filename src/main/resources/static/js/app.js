@@ -56,10 +56,10 @@
         BalanceService.createBalance = function (newBalance, callback) {
             var data = new ResourceDao(urlBase + 'create');
             data.post(newBalance).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -67,10 +67,10 @@
         BalanceService.editBalance = function (editedBalance, id, callback) {
             var data = new ResourceDao(urlBase + 'edit/' + id);
             data.post(editedBalance).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -89,10 +89,10 @@
         BalanceService.deleteBalance = function (id, type, callback) {
             var data = new ResourceDao(urlBase + 'delete/' + type + '/' + id);
             data.post().then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -133,11 +133,22 @@
         BalanceService.doPayment = function (params, callback) {
             var data = new ResourceDao(urlBase + 'pay');
             data.post(params).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
+                }
+            );
+        };
+        BalanceService.getAllBalanceByUserId = function(userId, callback) {
+            var data = new ResourceDao(urlBase + 'list/user/' + userId);
+            data.list().then(
+                function(data) {
+                    callback(data);
+                },
+                function(error){
+                    callback(error);
                 }
             );
         };
@@ -148,10 +159,10 @@
         TimeReportService.createTimeReport = function (newReport, callback) {
             var data = new ResourceDao(urlBase + 'create');
             data.post(newReport).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -159,10 +170,10 @@
         TimeReportService.editTimeReport = function (editedReport, id, callback) {
             var data = new ResourceDao(urlBase + 'edit/' + id);
             data.post(editedReport).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -181,10 +192,10 @@
         TimeReportService.deleteTimeReport = function (id, callback) {
             var data = new ResourceDao(urlBase + 'delete/' + id);
             data.post().then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -240,10 +251,10 @@
         StatusService.createStatus = function (newStatus, callback) {
             var data = new ResourceDao(urlBase + 'create');
             data.post(newStatus).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -251,10 +262,10 @@
         StatusService.editStatus = function (editedStatus, id, callback) {
             var data = new ResourceDao(urlBase + 'edit/' + id);
             data.post(editedStatus).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -273,10 +284,10 @@
         StatusService.deleteStatus = function (id, callback) {
             var data = new ResourceDao(urlBase + 'delete/' + id);
             data.post().then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -295,14 +306,14 @@
     }]);
     app.service('ProjectService',['ResourceDao', function (ResourceDao) {
         var ProjectService = this;
-        var urlBase = '/api/project/'
+        var urlBase = '/api/project/';
         ProjectService.createProject = function (newProject, callback) {
             var data = new ResourceDao(urlBase + 'create');
             data.post(newProject).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -310,10 +321,10 @@
         ProjectService.editProject = function (editedProject, id, callback) {
             var data = new ResourceDao(urlBase + 'edit/' + id);
             data.post(editedProject).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -332,10 +343,10 @@
         ProjectService.deleteProject = function (id, callback) {
             var data = new ResourceDao(urlBase + 'delete/' + id);
             data.post().then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -358,10 +369,10 @@
         UserService.createUser = function (newUser, callback) {
             var data = new ResourceDao(urlBase + 'create');
             data.post(newUser).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -369,10 +380,10 @@
         UserService.editUser = function (editedUser, id, callback) {
             var data = new ResourceDao(urlBase + 'edit/' + id);
             data.post(editedUser).then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -391,10 +402,10 @@
         UserService.deleteUser = function (id, callback) {
             var data = new ResourceDao(urlBase + 'delete/' + id);
             data.post().then(
-                function(success) {
+                function() {
                     callback(true);
                 },
-                function(error){
+                function(){
                     callback(false);
                 }
             );
@@ -427,12 +438,10 @@
             vm.datepicker.opened = true;
         };
         vm.nextDay = function () {
-            var nextDay = new Date(vm.selectedDate.getFullYear(), vm.selectedDate.getMonth(), vm.selectedDate.getDate() + 1);
-            vm.selectedDate = nextDay;
+            vm.selectedDate = new Date(vm.selectedDate.getFullYear(), vm.selectedDate.getMonth(), vm.selectedDate.getDate() + 1);
         };
         vm.previousDay = function () {
-            var previousDay = new Date(vm.selectedDate.getFullYear(), vm.selectedDate.getMonth(), vm.selectedDate.getDate() - 1);
-            vm.selectedDate = previousDay;
+            vm.selectedDate = new Date(vm.selectedDate.getFullYear(), vm.selectedDate.getMonth(), vm.selectedDate.getDate() - 1);
         };
         vm.openNewReport = function() {
             var modal = $uibModal.open({
@@ -442,7 +451,7 @@
                 templateUrl: 'html/components/report-modal.html',
                 controller: 'NewReportModalController',
                 controllerAs: 'ctrl',
-                size: 'lg',
+                size: 'lg'
             });
             modal.result.then(function (newReport) {
                 newReport.created = $filter('date')(vm.selectedDate, 'yyyy-MM-dd');
@@ -627,7 +636,7 @@
         $scope.$watch(function() {
             return vm.selectedDate;
         }, function(current, original) {
-            if(current !== original) {
+            if(current !== /** @type {boolean} */ original) {
                 vm.loadData();
             }
         });
@@ -655,7 +664,7 @@
                 userId: vm.form.user.id,
                 projectId: vm.form.project.id,
                 hour: vm.form.hour,
-                note: vm.form.note,
+                note: vm.form.note
             };
             $uibModalInstance.close(newReport);
         };
@@ -755,7 +764,7 @@
         $scope.$watch(function() {
             return vm.form.net;
         }, function () {
-            if($('#gross').is(":focus") || vm.form.net === null) {
+            if($('#gross').is(':focus') || vm.form.net === null) {
                 return;
             }
             vm.form.gross = parseInt(vm.form.net * (1 + (vm.form.vat / 100)), 10);
@@ -765,7 +774,7 @@
         $scope.$watch(function() {
             return vm.form.gross;
         }, function () {
-            if($('#net').is(":focus") || vm.form.gross === null) {
+            if($('#net').is(':focus') || vm.form.gross === null) {
                 return;
             }
             vm.form.net = parseInt(vm.form.gross / (1 + (vm.form.vat / 100)), 10);
@@ -858,7 +867,7 @@
         $scope.$watch(function() {
             return vm.form.net;
         }, function () {
-            if($('#gross').is(":focus") || vm.form.net === null) {
+            if($('#gross').is(':focus') || vm.form.net === null) {
                 return;
             }
             vm.form.gross = parseInt(vm.form.net * (1 + (vm.form.vat / 100)), 10);
@@ -868,7 +877,7 @@
         $scope.$watch(function() {
             return vm.form.gross;
         }, function () {
-            if($('#net').is(":focus") || vm.form.gross === null) {
+            if($('#net').is(':focus') || vm.form.gross === null) {
                 return;
             }
             vm.form.net = parseInt(vm.form.gross / (1 + (vm.form.vat / 100)), 10);
@@ -900,7 +909,7 @@
             $uibModalInstance.dismiss();
         };
     });
-    app.controller('OpenItemsController', ['BalanceService', function(BalanceService) {
+    app.controller('OpenItemsController', ['$filter', 'BalanceService', 'ngToast', function($filter, BalanceService, ngToast) {
         var vm = this;
         vm.searchField = '';
         vm.tableConfig = {
@@ -919,7 +928,7 @@
                 { name: 'Műveletek', prop: null}],
             sorting: {
                 type: 'id',
-                reverse: false,
+                reverse: false
             },
             data: null
         };
@@ -929,7 +938,21 @@
                 id: balance.id,
                 balanceType: balance.balanceType,
                 completionDate: $filter('date')(new Date(), 'yyyy-MM-dd')
-            }
+            };
+            BalanceService.doPayment(params, function(success) {
+                if(success) {
+                    ngToast.success({
+                        content: 'Sikeres teljesítés!',
+                        animation: 'fade'
+                    });
+                    loadList();
+                } else {
+                    ngToast.danger({
+                        content: 'Sikertelen teljesítés!',
+                        animation: 'fade'
+                    });
+                }
+            });
         };
 
         function loadList() {
@@ -950,7 +973,7 @@
                 { name: 'Műveletek', prop: null}],
             sorting: {
                 type: 'name',
-                reverse: false,
+                reverse: false
             },
             data: null
         };
@@ -1001,45 +1024,111 @@
             })
         };
     }]);
-    app.controller('UserEditController', ['$routeParams', '$location', 'UserService', 'ngToast', function ($routeParams, $location, UserService, ngToast) {
-        var vm = this;
-        var userId = $routeParams.id;
-        vm.user = {
-            name: '',
-            wage: 0,
-            note: ''
-        };
-        UserService.getUserById(userId, function(data){
-            if(data) {
-                vm.user = {
-                    name: data.name,
-                    wage: data.wage,
-                    note: data.note
-                }
-            } else {
-                ngToast.danger({
-                    content: 'Valami hiba történt!',
-                    animation: 'fade'
-                });
+    app.controller('UserEditController', ['$scope', '$routeParams', '$location', 'UserService', 'TimeReportService', 'BalanceService', 'ngToast',
+        function ($scope, $routeParams, $location, UserService, TimeReportService, BalanceService, ngToast) {
+            var vm = this;
+            $scope.start = moment().subtract(29, 'days');
+            $scope.end = moment();
+            function cb(start, end) {
+                console.log('datepicker callback');
+                $scope.start = start;
+                $scope.end = end;
+                $('#timerange span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
             }
-        });
-        vm.editUser = function() {
-            UserService.editUser(vm.user, userId, function(success){
-                if(success) {
-                    ngToast.danger({
-                        content: 'Sikeres szerkesztés!',
-                        animation: 'fade'
-                    });
-                    $location.path('/user');
+            $('#timerange').daterangepicker({
+                startDate: $scope.start,
+                endDate: $scope.end,
+                opens: 'center',
+                ranges: {
+                    'Ma': [moment(), moment()],
+                    '7 nap': [moment().subtract(6, 'days'), moment()],
+                    '30 nap': [moment().subtract(29, 'days'), moment()],
+                    'Hónap': [moment().startOf('month'), moment().endOf('month')],
+                    'Előző hónap': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+            var userId = $routeParams.id;
+            vm.user = {
+                name: '',
+                wage: 0,
+                note: ''
+            };
+            vm.timeReportTableConfig = {
+                headers: ['Dátum', 'Óraszám', 'Munka', 'Megjegyzés'],
+                data: null
+            };
+            vm.userBalanceTableConfig = {
+                headers: ['Dátum', 'Összeg', 'Kategória', 'Megjegyzés'],
+                data: null
+            };
+            vm.dateFilter = function(data) {
+                //console.log(data);
+                var date = moment(data.created, 'YYYY-MM-DD');
+                return date.isBetween($scope.start, $scope.end);
+            };
+            $scope.$watch(function(){
+                return $scope.start;
+            }, function(current, original){
+                console.log('START CHANGE');
+            }, true);
+            $scope.$watch(function(){
+                return $scope.end;
+            }, function(current, original){
+                console.log('END CHANGE');
+            }, true);
+            UserService.getUserById(userId, function(data){
+                if(data) {
+                    vm.user = {
+                        name: data.name,
+                        wage: data.wage,
+                        note: data.note
+                    }
                 } else {
                     ngToast.danger({
-                        content: 'Sikertelen szerkesztés!',
+                        content: 'Valami hiba történt!',
                         animation: 'fade'
                     });
                 }
             });
-        };
-    }]);
+            TimeReportService.getAllTimeReportsByUserId(userId, function(data){
+                if(data) {
+                    vm.timeReportTableConfig.data = data;
+                } else {
+                    ngToast.danger({
+                        content: 'Valami hiba történt!',
+                        animation: 'fade'
+                    });
+                }
+            });
+            BalanceService.getAllBalanceByUserId(userId, function(data){
+                if(data) {
+                    vm.userBalanceTableConfig.data = data;
+                } else {
+                    ngToast.danger({
+                        content: 'Valami hiba történt!',
+                        animation: 'fade'
+                    });
+                }
+            });
+            vm.editUser = function() {
+                UserService.editUser(vm.user, userId, function(success){
+                    if(success) {
+                        ngToast.danger({
+                            content: 'Sikeres szerkesztés!',
+                            animation: 'fade'
+                        });
+                        $location.path('/user');
+                    } else {
+                        ngToast.danger({
+                            content: 'Sikertelen szerkesztés!',
+                            animation: 'fade'
+                        });
+                    }
+                });
+            };
+            cb($scope.start, $scope.end);
+        }
+    ]);
     app.controller('ProjectListController', ['ProjectService', 'ngToast', function (ProjectService, ngToast) {
         var vm = this;
         vm.tableConfig = {
@@ -1051,7 +1140,7 @@
                 { name: 'Műveletek', prop: null}],
             sorting: {
                 type: 'name',
-                reverse: false,
+                reverse: false
             },
             data: null
         };
@@ -1151,7 +1240,7 @@
                 { name: 'Műveletek', prop: null}],
             sorting: {
                 type: 'name',
-                reverse: false,
+                reverse: false
             },
             data: null
         };
@@ -1243,37 +1332,37 @@
                 redirectTo: '/today'
             })
             .when('/today', {
-                templateUrl: PAGES + 'today/today.html',
+                templateUrl: PAGES + 'today/today.html'
             })
             .when('/user', {
-                templateUrl: PAGES + 'user/list.html',
+                templateUrl: PAGES + 'user/list.html'
             })
             .when('/user/create', {
-                templateUrl: PAGES + 'user/create.html',
+                templateUrl: PAGES + 'user/create.html'
             })
             .when('/user/edit/:id', {
-                templateUrl: PAGES + 'user/edit.html',
+                templateUrl: PAGES + 'user/edit.html'
             })
             .when('/project', {
-                templateUrl: PAGES + 'project/list.html',
+                templateUrl: PAGES + 'project/list.html'
             })
             .when('/project/create', {
-                templateUrl: PAGES + 'project/create.html',
+                templateUrl: PAGES + 'project/create.html'
             })
             .when('/project/edit/:id', {
-                templateUrl: PAGES + 'project/edit.html',
+                templateUrl: PAGES + 'project/edit.html'
             })
             .when('/status', {
-                templateUrl: PAGES + 'status/list.html',
+                templateUrl: PAGES + 'status/list.html'
             })
             .when('/status/create', {
-                templateUrl: PAGES + 'status/create.html',
+                templateUrl: PAGES + 'status/create.html'
             })
             .when('/status/edit/:id', {
-                templateUrl: PAGES + 'status/edit.html',
+                templateUrl: PAGES + 'status/edit.html'
             })
             .when('/openitems', {
-                templateUrl: PAGES + 'balance/openitems.html',
+                templateUrl: PAGES + 'balance/openitems.html'
             })
             .otherwise({ redirectTo: '/' });
         $locationProvider.html5Mode(true);

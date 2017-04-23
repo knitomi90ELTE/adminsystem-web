@@ -71,4 +71,8 @@ public class DefaultUserBalanceDao implements UserBalanceDao {
         userBalanceRepository.saveAndFlush(userBalanceEntity);
     }
 
+    @Override
+    public Set<Balance> findAllByUserId(Long userId) {
+        return userBalanceTransformer.transform(userBalanceRepository.findAllByUserEntity_IdAndCompletedIsNotNull(userId));
+    }
 }

@@ -1,18 +1,84 @@
 <div ng-controller="UserEditController as ctrl" class="container">
-  <h1>Alkalmazott szerkesztése</h1>
-  <form name="userForm">
-    <div class="form-group">
-      <label for="userName">Név</label>
-      <input type="text" class="form-control" id="userName" placeholder="Név" ng-model="ctrl.user.name">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-lg-6">
+          <h2>{{ctrl.user.name}}</h2>
+        </div>
+        <div class="col-lg-6">
+          <div class="pull-right">
+            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#userFormBody">Szerkesztés
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="userWage">Órabér</label>
-      <input type="number" class="form-control" id="userWage" placeholder="Órabér" ng-model="ctrl.user.wage">
+    <div id="userFormBody" class="panel-body collapse">
+      <form name="userForm">
+        <div class="form-group">
+          <label for="userName">Név</label>
+          <input type="text" class="form-control" id="userName" placeholder="Név" ng-model="ctrl.user.name">
+        </div>
+        <div class="form-group">
+          <label for="userWage">Órabér</label>
+          <input type="number" class="form-control" id="userWage" placeholder="Órabér" ng-model="ctrl.user.wage">
+        </div>
+        <div class="form-group">
+          <label for="userNote">Megjegyzés</label>
+          <input type="text" class="form-control" id="userNote" placeholder="Megjegyzés" ng-model="ctrl.user.note">
+        </div>
+        <button type="button" class="btn btn-success" ng-click="ctrl.editUser()">Mentés</button>
+      </form>
     </div>
-    <div class="form-group">
-      <label for="userNote">Megjegyzés</label>
-      <input type="text" class="form-control" id="userNote" placeholder="Megjegyzés" ng-model="ctrl.user.note">
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div id="timerange" class="timerange">
+            <i class="glyphicon glyphicon-calendar"></i>&nbsp;
+            <span></span> <b class="caret"></b>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th ng-repeat="header in ctrl.timeReportTableConfig.headers">{{header}}</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="report in ctrl.timeReportTableConfig.data | filter: ctrl.dateFilter | orderBy:'created'">
+                <td>{{report.created}}</td>
+                <td>{{report.hour}}</td>
+                <td>{{report.project.name}}</td>
+                <td>{{report.note}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th ng-repeat="header in ctrl.userBalanceTableConfig.headers">{{header}}</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="balance in ctrl.userBalanceTableConfig.data | orderBy:'created'">
+                <td>{{balance.created}}</td>
+                <td>{{balance.net}}</td>
+                <td>{{balance.status.name}}</td>
+                <td>{{balance.note}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-    <button type="button" class="btn btn-success" ng-click="ctrl.editUser()">Mentés</button>
-  </form>
+  </div>
 </div>

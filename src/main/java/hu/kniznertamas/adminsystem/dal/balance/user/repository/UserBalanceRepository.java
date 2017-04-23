@@ -17,4 +17,6 @@ public interface UserBalanceRepository extends JpaRepository<UserBalanceEntity, 
 
     Set<UserBalanceEntity> findAllByCompletedIsNotNull();
 
+    Set<UserBalanceEntity> findAllByUserEntity_IdAndCompletedIsNotNull(Long userEntityId);
+
 }
