@@ -1024,16 +1024,24 @@
             })
         };
     }]);
-    app.controller('UserEditController', ['$scope', '$routeParams', '$location', 'UserService', 'TimeReportService', 'BalanceService', 'ngToast',
-        function ($scope, $routeParams, $location, UserService, TimeReportService, BalanceService, ngToast) {
+    app.controller('UserEditController', ['$scope', '$routeParams', '$location', '$timeout', 'UserService', 'TimeReportService', 'BalanceService', 'ngToast',
+        function ($scope, $routeParams, $location, $timeout, UserService, TimeReportService, BalanceService, ngToast) {
             var vm = this;
+            var DATE_FORMAT = 'YYYY-MM-DD';
             $scope.start = moment().subtract(29, 'days');
             $scope.end = moment();
+            vm.availProjects = [];
+            vm.availStatuses = [];
+            vm.availFilter = {
+                project: null,
+                status: null
+            };
             function cb(start, end) {
-                console.log('datepicker callback');
-                $scope.start = start;
-                $scope.end = end;
-                $('#timerange span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+                $timeout(function(){
+                    $scope.start = start;
+                    $scope.end = end;
+                    $('#timerange span').html(start.format(DATE_FORMAT) + ' - ' + end.format(DATE_FORMAT));
+                });
             }
             $('#timerange').daterangepicker({
                 startDate: $scope.start,
@@ -1055,27 +1063,25 @@
             };
             vm.timeReportTableConfig = {
                 headers: ['Dátum', 'Óraszám', 'Munka', 'Megjegyzés'],
-                data: null
+                data: []
             };
             vm.userBalanceTableConfig = {
                 headers: ['Dátum', 'Összeg', 'Kategória', 'Megjegyzés'],
-                data: null
+                data: []
             };
             vm.dateFilter = function(data) {
-                //console.log(data);
-                var date = moment(data.created, 'YYYY-MM-DD');
-                return date.isBetween($scope.start, $scope.end);
+                return moment(data.created, DATE_FORMAT).isBetween($scope.start, $scope.end);
             };
-            $scope.$watch(function(){
-                return $scope.start;
-            }, function(current, original){
-                console.log('START CHANGE');
-            }, true);
-            $scope.$watch(function(){
-                return $scope.end;
-            }, function(current, original){
-                console.log('END CHANGE');
-            }, true);
+            vm.getHoursSum = function() {
+                return vm.timeReportTableConfig.data.filter(vm.dateFilter).map(function (report) {
+                    return report.hour;
+                }).reduce(add, 0);
+            };
+            vm.getBalanceSum = function() {
+                return vm.userBalanceTableConfig.data.filter(vm.dateFilter).map(function (balance) {
+                    return balance.net;
+                }).reduce(add, 0);
+            };
             UserService.getUserById(userId, function(data){
                 if(data) {
                     vm.user = {
@@ -1093,6 +1099,9 @@
             TimeReportService.getAllTimeReportsByUserId(userId, function(data){
                 if(data) {
                     vm.timeReportTableConfig.data = data;
+                    vm.availProjects = _.uniqBy(data.map(function (report) {
+                        return report.project;
+                    }), 'id');
                 } else {
                     ngToast.danger({
                         content: 'Valami hiba történt!',
@@ -1103,6 +1112,9 @@
             BalanceService.getAllBalanceByUserId(userId, function(data){
                 if(data) {
                     vm.userBalanceTableConfig.data = data;
+                    vm.availStatuses = _.uniqBy(data.map(function (balance) {
+                        return balance.status;
+                    }), 'id');
                 } else {
                     ngToast.danger({
                         content: 'Valami hiba történt!',
@@ -1126,6 +1138,9 @@
                     }
                 });
             };
+            function add(a, b) {
+                return a + b;
+            }
             cb($scope.start, $scope.end);
         }
     ]);
