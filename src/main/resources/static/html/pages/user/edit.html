@@ -37,7 +37,7 @@
             Összesen: {{ctrl.getHoursSum()}}
           </div>
           <div class="col-md-7">
-            <ui-select id="projectFilter" theme="bootstrap" ng-model="vm.availFilter.project">
+            <ui-select id="projectFilter" theme="bootstrap" ng-model="availFilter.project">
               <ui-select-match>{{$select.selected.name}}</ui-select-match>
               <ui-select-choices repeat="project in ctrl.availProjects | filter: $select.search">{{project.name}}</ui-select-choices>
             </ui-select>
@@ -54,7 +54,7 @@
             Összesen: {{ctrl.getBalanceSum()}}
           </div>
           <div class="col-md-7">
-            <ui-select id="statusFilter" theme="bootstrap" ng-model="vm.availFilter.status">
+            <ui-select id="statusFilter" theme="bootstrap" ng-model="availFilter.status">
               <ui-select-match>{{$select.selected.name}}</ui-select-match>
               <ui-select-choices repeat="status in ctrl.availStatuses | filter: $select.search">{{status.name}}</ui-select-choices>
             </ui-select>
@@ -72,7 +72,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr ng-repeat="report in ctrl.timeReportTableConfig.data | filter: ctrl.dateFilter | orderBy:'created'">
+              <tr ng-repeat="report in ctrl.timeReportTableConfig.data | filter: ctrl.dateFilter | filter: projectFilter | orderBy:'created'">
                 <td>{{report.created}}</td>
                 <td>{{report.hour}}</td>
                 <td>{{report.project.name}}</td>

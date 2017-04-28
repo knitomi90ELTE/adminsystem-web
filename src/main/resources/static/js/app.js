@@ -1032,7 +1032,7 @@
             $scope.end = moment();
             vm.availProjects = [];
             vm.availStatuses = [];
-            vm.availFilter = {
+            $scope.availFilter = {
                 project: null,
                 status: null
             };
@@ -1072,6 +1072,17 @@
             vm.dateFilter = function(data) {
                 return moment(data.created, DATE_FORMAT).isBetween($scope.start, $scope.end);
             };
+            vm.projectFilter = function(data) {
+                if($scope.availFilter.project !== null) {
+                    console.log(data.project.id + ' ' + $scope.availFilter.project.id);
+                    return data.project.id === $scope.availFilter.project.id;
+                }
+                return true;
+            };
+            $scope.$watch('availFilter.project', function(current, original){
+                console.log('change');
+                $scope.$apply();
+            });
             vm.getHoursSum = function() {
                 return vm.timeReportTableConfig.data.filter(vm.dateFilter).map(function (report) {
                     return report.hour;
