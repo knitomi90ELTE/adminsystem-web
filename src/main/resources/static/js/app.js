@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('AdminSystem', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast', 'ngAnimate', 'ui.bootstrap', 'ui.select']);
+    var app = angular.module('admin-system-app', ['ngResource', 'ngRoute', 'ngSanitize', 'ngToast', 'ngAnimate', 'ui.bootstrap', 'ui.select']);
     app.factory('ResourceDao', ['$resource', function($resource) {
         return function(url, uriParams) {
             return new ResourceDao(url, uriParams, $resource);
@@ -909,7 +909,7 @@
             $uibModalInstance.dismiss();
         };
     });
-    app.controller('OpenItemsController', ['$filter', 'BalanceService', 'ngToast', function($filter, BalanceService, ngToast) {
+    app.controller('BalanceListController', ['$filter', 'BalanceService', 'ngToast', function($filter, BalanceService, ngToast) {
         var vm = this;
         vm.searchField = '';
         vm.tableConfig = {
