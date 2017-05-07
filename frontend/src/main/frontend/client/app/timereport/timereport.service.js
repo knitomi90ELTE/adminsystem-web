@@ -23,14 +23,7 @@
 
         function createTimeReport(newReport, callback) {
             var data = new ResourceDao(urlBase + 'create');
-            data.post(newReport).then(
-                function() {
-                    callback(true);
-                },
-                function(){
-                    callback(false);
-                }
-            );
+            data.post(newReport).then(callback);
         }
         function editTimeReport(editedReport, id, callback) {
             var data = new ResourceDao(urlBase + 'edit/' + id);

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('admin-app').config(routingConfig);
+    angular.module('app').config(routingConfig);
 
     function routingConfig($routeProvider, $locationProvider, $httpProvider) {
         var PAGES = 'html/pages/';
